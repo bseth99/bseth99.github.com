@@ -2,7 +2,7 @@
 
 jekyll --no-auto
 
-cp _site/* ../bseth99.github.com
+cp -R _site/* ../bseth99.github.com
 
 cd ../bseth99.github.com
 
