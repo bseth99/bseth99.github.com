@@ -1,6 +1,8 @@
 #!/bin/sh
 
-jekyll --no-auto . ../bseth99.github.com
+jekyll --no-auto
+
+cp _site/* ../bseth99.github.com
 
 cd ../bseth99.github.com
 
