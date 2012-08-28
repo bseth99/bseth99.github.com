@@ -1,0 +1,9 @@
+
+http://bseth99.github.com/atom.xml
+http://bseth99.github.com/index.html
+http://bseth99.github.com/projects/colorbox/demo-part-1.html
+http://bseth99.github.com/projects/colorbox/demo-part-2.html
+http://bseth99.github.com/projects/colorbox/index.html
+http://bseth99.github.com/projects/index.html
+http://bseth99.github.com/sitemap.txt
+http://bseth99.github.com/tags.html
