@@ -1,0 +1,304 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>jQuery UI Demo (Part 3) - Proxy Overrides</title>
+    
+    <meta name="author" content="Ben Olson">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="/assets/themes/twitter/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/themes/twitter/css/style.css?body=1" rel="stylesheet" type="text/css" media="all">
+    <link href="/assets/style.css" rel="stylesheet">
+
+    <!-- Le fav and touch icons -->
+  <!-- Update these with your own images
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  -->
+
+   <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.8.23/themes/base/jquery-ui.css">
+
+   <script src="http://code.jquery.com/jquery.js"></script>
+   <script src="http://code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+
+  </head>
+
+  <body>
+
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="/">Ben's Sandbox</a>
+          <ul class="nav">
+            
+            
+            
+
+
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/projects/index.html">Projects</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+
+
+
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="content">
+        
+<div class="page-header">
+  <h3>jQuery UI Demo (Part 3) - Proxy Overrides </h3>
+</div>
+
+<div class="row">
+  <div class="span12">
+    
+
+ <div class="discussion">
+   This example shows how to proxy the $.Widget._setOption function to
+   intercept option changes to Draggable and Resizable.  Since there's no
+   way to prevent these calls from being made on an element after ColorBox is
+   created, we want to ensure the options we set are no overidden.  Addtionally,
+   stopImmediatePropagation() is used in the dragstop event to prevent other
+   handlers from being called that might affect the custom handling that ColorBox
+   is providing. This demo is referenced in several of my blog posts related to
+   the jQuery UI Widget series at
+       <a href="http://benknowscode.wordpress.com/category/projects/jquery-ui-widgets/"
+          >BenKnowsCode.wordpress.com</a>
+ </div>
+
+ <div class="target">
+ </div>
+
+
+<script>
+
+(function ($)
+{
+   var _conf =
+     {
+        draggable:
+          {
+            grid: [50, 50]
+          },
+        resizable:
+          {
+            maxHeight: 500,
+            maxWidth: 500,
+            minHeight: 100,
+            minWidth: 100,
+            grid: [50, 50]
+          }
+     };
+
+   function _filter(type, key, value)
+   {
+      if (key in _conf[type])
+         return _conf[type][key];
+      else
+         return value;
+   }
+
+   $.widget("sdt.colorbox",
+    {
+      options:
+       {
+          color: 'green'
+       },
+
+      _create: function()
+       {
+          this.element
+           .addClass('colorbox')
+           .css(
+            {
+               height: '100px',
+               width: '100px',
+               backgroundColor: this.options.color
+            })
+           .resizable(_conf.resizable)
+           .draggable(_conf.draggable)
+           .on('dragstop', $.proxy(function(e) {alert(this.widgetName + ' drag done'); e.stopImmediatePropagation()}, this));
+       },
+
+      _init: function()
+       {
+          this.element
+           .css(
+            {
+               backgroundColor: this.options.color
+            })
+       },
+
+      _setOption: function(option, value)
+       {
+          this._init();
+
+          $.Widget.prototype._setOption.apply( this, arguments );
+       },
+
+      destroy: function()
+       {
+          this.element
+           .removeClass('colorbox')
+           .css(
+            {
+               height: '',
+               width: '',
+               backgroundColor: ''
+            });
+
+          $.Widget.prototype.destroy.call( this );
+       }
+
+    });
+
+   var _draggable_setoption_orig = $.ui.draggable.prototype._setOption;
+   $.ui.draggable.prototype._setOption = function(key, value)
+   {
+      var _value = value;
+
+      if (this.element.data('colorbox'))
+         _value = _filter('draggable', key, _value);
+
+      _draggable_setoption_orig.call(this, key, _value);
+   }
+
+   var _resizable_setoption_orig = $.ui.resizable.prototype._setOption;
+   $.ui.resizable.prototype._setOption = function(key, value)
+   {
+      var _value = value;
+
+      if (this.element.data('colorbox'))
+         _value = _filter('resizable', key, _value);
+
+      _draggable_setoption_orig.call(this, key, _value);
+   }
+
+}
+)(jQuery);
+
+$(function()
+{
+   $('<div>colorbox</div>').appendTo('.target')
+      .colorbox()
+      .draggable(
+        {
+          grid: false
+        }).bind('dragstop', function (e, ui)
+           {
+              alert('outside colorbox');
+           });
+
+   $('<div>not colorbox</div>').appendTo('.target')
+      .css(
+        {
+         height: '100px',
+         width: '100px',
+         backgroundColor: 'red'
+        })
+      .draggable({grid: false});
+});
+
+</script>
+
+
+
+  </div>
+</div>
+
+
+      </div>
+
+      <footer>
+        <p>&copy; Ben Olson 2012
+          with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
+          and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
+        </p>
+      </footer>
+
+    </div> <!-- /container -->
+
+    
+  </body>
+</html>
+

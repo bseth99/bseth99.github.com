@@ -3,9 +3,12 @@ http://bseth99.github.com/atom.xml
 http://bseth99.github.com/index.html
 http://bseth99.github.com/projects/colorbox/demo-part-1.html
 http://bseth99.github.com/projects/colorbox/demo-part-2.html
+http://bseth99.github.com/projects/colorbox/demo-part-3.html
 http://bseth99.github.com/projects/colorbox/index.html
+http://bseth99.github.com/projects/colorbox/sortable-draggable.html
 http://bseth99.github.com/projects/index.html
 http://bseth99.github.com/projects/rotate/1-rotate-position.html
+http://bseth99.github.com/projects/rotate/1-rotate-position2.html
 http://bseth99.github.com/projects/rotate/2-alignment.html
 http://bseth99.github.com/projects/rotate/3-circle-align.html
 http://bseth99.github.com/projects/rotate/index.html
