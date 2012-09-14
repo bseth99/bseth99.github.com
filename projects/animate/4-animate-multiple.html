@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>jQuery UI Demo - Overlapping Functionality</title>
+    <title>jQuery Animation - Multiple Elements Simultaneously</title>
     
     <meta name="author" content="Ben Olson">
 
@@ -150,7 +150,7 @@
       <div class="content">
         
 <div class="page-header">
-  <h3>jQuery UI Demo - Overlapping Functionality </h3>
+  <h3>jQuery Animation - Multiple Elements Simultaneously </h3>
 
 <!-- Place this tag where you want the +1 button to render. -->
 <div style="position: relative; top: -20px; text-align: right">
@@ -170,57 +170,117 @@
   <div class="span12">
     
 
+<script src="bresenham.js"></script>
+
 <style>
-   #sortable { list-style-type: none; margin: 0; padding: 0; width: 60%; }
-   #sortable li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; font-size: 1.4em; height: 18px; }
-   #sortable li span { position: absolute; margin-left: -1.3em; }
+.wrapper {
+   margin: 30px;
+   height: 500px;
+}
+
+.box {
+   position: absolute;
+   background-color: red;
+   height: 50px;
+   width: 80px;
+}
 </style>
 
+<div class="discussion">
+A quick test to double-check elements will animate the way I expect.  This demo shows how to animate multiple items both iteratively
+with different end-points and in one animate() call to animate everything to the same end-point.
+My concern is that trying to animate several elements at once
+would result in timing issues.  However, because of the single threaded nature of Javascript, the animations won't start until
+the event handler has finished executing.  You can rely on this "feature" to setup all your animations knowing that they will execute
+properly relative to the timing you specify.  The only caveat being that if you take too long to get things running, you risk the
+animations not running at all.
+<ul>
+  <li><b>Synchronized</b> - All the elements will animate outward synchronously and then return back to the start position</li>
+  <li><b>Staggered?</b> - Attempt to desynchronize the animation via a for loop placed after each animate call on each element.
+      All this will do is cause the animation to skip forward.</li>
+  <li><b>Staggered!</b> - Using delay() before each animate is works very nicely to stagger the animations.</li>
+</ul>
+</div>
 
- <div class="discussion">
-   This quick example shows that multiple widgets can interfere with one another
-   if care is not taken to avoid attaching multiple widgets to an element.
-   The Sortable widget provides interaction behaviors on the children of a target
-   element.  If Draggable is attached to those children after Sortable is instantiated,
-   all the functionality of Sortable is lost.  This is probably not an intentional thing to
-   do when constructing a site. However, an incorrect selector can easily grab too many
-   elements and add Draggable which might cause some debugging headaches try to figure out
-   why Sortable is not working as expected.
- </div>
+<br/>
+<div class="actions">
+   <input id="try1" type="button" value="Synchronized" />
+   <input id="try2" type="button" value="Staggered?" />
+   <input id="try3" type="button" value="Staggered!" />
+</div>
+<br/>
+
+<div class="wrapper">
+ <div class="box"></div>
+ <div class="box"></div>
+ <div class="box"></div>
+ <div class="box"></div>
+ <div class="box"></div>
+</div>
+
+<script>
+$(function()
+{
+   var $b = $('.box').css({left: 400, top: 500}),
+       p = $b.offset(),
+       sp = {x: p.left, y: p.top},
+       cc = plotCircle(p.left, p.top, 200),
+       len = cc.length,
+       ep;
+
+   ep = $.map([1,2,3,4,5], function (i,n)
+      {
+         return cc[Math.floor(len * n / 5)];
+      });
+
+   $('#try1').click(function ()
+     {
+        $b.each(function (idx, box)
+           {
+              var $box = $(box);
+
+              $box.animate({left: ep[idx].x, top: ep[idx].y}, 2000, 'easeOutBounce');
+
+           });
+
+        $b.animate({left: sp.x, top: sp.y}, 'slow');
+     });
+
+   $('#try2').click(function ()
+     {
+        $b.each(function (idx, box)
+           {
+              var $box = $(box);
+
+              $box.animate({left: ep[idx].x, top: ep[idx].y}, 2000, 'easeOutBounce');
+
+              var m = 1;
+              for (var i=0;i<100000000;i++) { m *= m;}
+
+           });
+
+        $b.animate({left: sp.x, top: sp.y}, 'slow');
+     });
 
 
- <br/><br/>
- <div class="actions">
-    <input id="dragadd" type="button" value="Add Draggable"/>
-    <input id="dragdel" type="button" value="Remove Draggable"/>
- </div>
+   $('#try3').click(function ()
+     {
+        $b.each(function (idx, box)
+           {
+              var $box = $(box);
 
- <div class="target">
+              $box.delay(idx*500).animate({left: ep[idx].x, top: ep[idx].y}, 2000, 'easeOutBounce');
 
-   <ul id="sortable">
-    <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 1</li>
-    <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 2</li>
-    <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 3</li>
-    <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 4</li>
-    <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 5</li>
-    <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 6</li>
-    <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 7</li>
-   </ul>
- </div>
+           });
 
- <script>
+        $b.animate({left: sp.x, top: sp.y}, 'slow');
+     });
 
- $(function()
- {
-       $( "#sortable" ).sortable();
-       $( "#sortable" ).disableSelection();
-
-       $('#dragadd').click(function() {$( "#sortable" ).children().draggable();});
-       $('#dragdel').click(function() {$( "#sortable" ).children().draggable('destroy');});
- });
-
+});
 </script>
 
+</body>
+</html>
 
   </div>
 </div>
