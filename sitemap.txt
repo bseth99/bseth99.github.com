@@ -5,6 +5,7 @@ http://bseth99.github.com/projects/animate/1-bresenham.html
 http://bseth99.github.com/projects/animate/2-bezier-curves.html
 http://bseth99.github.com/projects/animate/3-animate-custom-size.html
 http://bseth99.github.com/projects/animate/4-animate-multiple.html
+http://bseth99.github.com/projects/animate/5-tweenlite-test.html
 http://bseth99.github.com/projects/animate/index.html
 http://bseth99.github.com/projects/colorbox/demo-part-1.html
 http://bseth99.github.com/projects/colorbox/demo-part-2.html
