@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Bresenham's Algorithm Javascript Implementation Test</title>
+    <title>SVG Creation and Animation with jQuery and jQuerySVG</title>
     
     <meta name="author" content="Ben Olson">
 
@@ -162,12 +162,12 @@
       <div class="content">
         
 <div class="page-header">
-  <h3>Bresenham's Algorithm Javascript Implementation Test </h3>
+  <h3>SVG Creation and Animation with jQuery and jQuerySVG </h3>
 
 <!-- Place this tag where you want the +1 button to render. -->
 <div style="position: relative; top: -20px; text-align: right; height: 30px">
-  <span><a href="http://benknowscode.wordpress.com/2012/09/12/using-bresenhams-algorithm-to-create-shapes-in-javascript/">View Blog</a></span>&nbsp;
-  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/animate/1-bresenham.html">View Source</a></span>&nbsp;
+  <span><a href="http://benknowscode.wordpress.com">View Blog</a></span>&nbsp;
+  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/svg/1-jquery-svg.html">View Source</a></span>&nbsp;
   <div class="g-plusone" data-size="small"></div>
 </div>
 
@@ -184,139 +184,123 @@
   <div class="span12">
     
 
-<script src="bresenham.js"></script>
+
+<script type="text/javascript" src="jquery.svg.js"></script>
+<script type="text/javascript" src="jquery.svganim.js"></script>
 
 <style>
-canvas {
+.wrapper {
+   float: left;
+   margin: 10px;
+   padding: 3px;
+   height: 300px;
+   width: 300px;
    border: 1px dotted black;
-}
-
-span {
-   display: inline-block;
-   width: 200px;
-   margin: 1px;
-}
-
-.shape-label {
-   text-align: center;
-   font-weight: bold;
 }
 
 </style>
 
-<div>
-  Several different shapes calcuated using Bresenham's Algorithm.
-</div>
-<br/>
-
-<div id="step1-label">
-<span class="shape-label">Line</span>
-<span class="shape-label">Circle</span>
-<span class="shape-label">Ellipse</span>
-<span class="shape-label">Bezier</span>
+<div class="discussion">
+A comparison of using jQuery to create and animation SVG object versus using
+jQuerySVG.  Using jQuery along is possible with some work-arounds, however,
+there are some convenience features in jQuerySVG that make various tasks
+easier.  <a href="http://benknowscode.wordpress.com">See the blog post for more.</a>
 </div>
 
-<div id="step1" step="1">
-<canvas class="line"></canvas>
-<canvas class="circle"></canvas>
-<canvas class="elipse"></canvas>
-<canvas class="bazier"></canvas>
-</div>
+/projects/svg/1-jquery-svg.html
 
-<div id="step1-text">
-<span class="line-text"></span>
-<span class="circle-text"></span>
-<span class="elipse-text"></span>
-<span class="bazier-text"></span>
-</div>
-
-<br/><br/>
-
-<div>
-  This time try to limit the number of points returned.
-</div>
-<br/>
-
-<div id="step5-label">
-<span class="shape-label">Line</span>
-<span class="shape-label">Circle</span>
-<span class="shape-label">Ellipse</span>
-<span class="shape-label">Bezier</span>
-</div>
-
-<div id="step5" step="5">
-<canvas class="line"></canvas>
-<canvas class="circle"></canvas>
-<canvas class="elipse"></canvas>
-<canvas class="bazier"></canvas>
-</div>
-
-<div id="step5-text">
-<span class="line-text"></span>
-<span class="circle-text"></span>
-<span class="elipse-text"></span>
-<span class="bazier-text"></span>
+<div id="jqonly" class="wrapper">
+ <div>jQuery Only - <a href="#" id="jqo-animate">Animate</a></div>
 </div>
 
 
 <script>
+function SVG(tag)
+{
+   return document.createElementNS('http://www.w3.org/2000/svg', tag);
+}
 
-   $('canvas').each(function()
+function Animate(options)
+{
+   var a = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+
+   for (var o in options)
+      a.setAttribute(o, options[o]);
+
+   return a;
+}
+
+$(function()
+{
+   var $svg = $(SVG('svg')).appendTo($('#jqonly'))
+                        .attr('height', $('#jqonly').height())
+                        .attr('width', $('#jqonly').width());
+
+   var $mr =
+     $(SVG('rect'))
+       .attr('x', 25)
+       .attr('y', 25)
+       .attr('width', 150)
+       .attr('height', '25%')
+       .attr('fill', 'white')
+       .attr('stroke', 'blue')
+       .attr('stroke-width', 3)
+       .appendTo($svg);
+
+   $('#jqo-animate').click(function ()
      {
-        var $pn = $(this).parent(),
-            cn = this.className,
-            step = +$pn.attr('step'),
-            pts, p, ctx;
+         $mr.animate({tabIndex: 0},
+             {
+                duration: 2000,
+                step: function (now, fx)
+                   {
+                      $(this)
+                         .attr('width', 150 + Math.round(50 * fx.pos))
+                         .attr('height', 25 + Math.round(25 * fx.pos)+'%')
+                         // .attr('stroke', 'aqua')  Need color transistion helper to make this happen
+                         .attr('stroke-width', 3 + Math.round(7 * fx.pos));
+                   }
+             });
 
-        this.height = 200;
-        this.width = 200;
+      });
 
-        switch (cn)
-        {
+   $mr.click(function () {alert('You clicked me!'); });
 
-           case 'line' :
-              pts = plotLine(25, 45, 155, 180, step);
-              break;
+});
+</script>
 
-           case 'circle' :
-              pts = plotCircle(100, 100, 90, step);
-              break;
 
-           case 'elipse' :
-              pts = plotEllipseRect(50, 80, 150, 120, step);
-              break;
 
-           case 'bazier' :
-              pts = plotBasicBezier(25, 45, 100, 60, 155, 180, step);
-              break;
+<div id="jqsvg" class="wrapper">
+  <div>jQuerySVG Plugin - <a href="#" id="jqs-animate">Animate</a></div>
+</div>
 
-        }
+<script>
+$(function()
+{
 
-        ctx = this.getContext('2d');
+   var svg = $('#jqsvg').svg().svg('get');
 
-        ctx.fillStyle = 'white';
-        ctx.fill();
+   var sr = svg.rect(25, 25, 150, '25%', 0, 0,
+       {fill: 'white', stroke: 'blue', strokeWidth: 3});
 
-        ctx.strokeStyle = 'black';
-        ctx.beginPath();
-        ctx.lineWidth = 1;
 
-        var sel = '#'+$pn[0].id+'-text > .'+cn+'-text';
-        $(sel).html('Points: ' + pts.length);
-
-        for (p=0;p<pts.length;p++)
-        {
-           ctx.moveTo(pts[p].x, pts[p].y);
-           ctx.arc(pts[p].x, pts[p].y, 1, 0, 2 * Math.PI, true);
-           ctx.fill();
-        }
-
-        ctx.stroke();
+   $('#jqs-animate').click(function ()
+     {
+         $(sr).animate({
+                svgWidth: 200,
+                svgHeight: '50%',
+                svgStrokeWidth: '+=7',
+                svgStroke: 'aqua'
+             }, 2000);
 
      });
 
+});
 </script>
 
+</body>
+</html>
   </div>
 </div>
 
