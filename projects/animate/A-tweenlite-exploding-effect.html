@@ -119,6 +119,14 @@
   
     
       
+    
+  
+    
+      
+    
+  
+    
+      
       	
       	<li><a href="/projects/index.html">Projects</a></li>
       	
@@ -195,7 +203,7 @@
 
 <!-- Place this tag where you want the +1 button to render. -->
 <div style="position: relative; top: -20px; text-align: right; height: 30px">
-  <span><a href="http://benknowscode.wordpress.com">View Blog</a></span>&nbsp;&nbsp;
+  <span><a href="http://benknowscode.wordpress.com/2012/10/06/javascript-physics-the-exploding-divs-experiment/">View Blog</a></span>&nbsp;&nbsp;
   <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/animate/A-tweenlite-exploding-effect.html">View Source</a></span>&nbsp;&nbsp;
   <div class="g-plusone" data-size="small"></div>
 </div>
@@ -644,7 +652,7 @@ $(function()
               off = $b.position(),
               ct = {x: $b.width() / 2 + off.left, y: $b.height() / 2 + off.top},
               area = $b.width() * $b.height(),
-              surf = 2 * ($b.width() + $b.height()),
+              surf = 10 * ($b.width() + $b.height()),
               mass = area / 100,
               rot = (Math.random() * 5 - 2.5),
               o = {area: 0, mass: 0, surf:0,
@@ -675,7 +683,7 @@ $(function()
           // the wave at dr, how long the wave is in contact with the
           // box, and how heavy the box is.
 
-          o.osd = (pin * 5000 / (o.dr * o.dr)) * (o.surf / psd) / o.mass;
+          o.osd = (pin * 1000 / (o.dr * o.dr)) * (o.surf / psd) / o.mass;
 
           // Now that we know how fast the box will be moving, we
           // can solve for how long it will to each part of the
