@@ -14,6 +14,7 @@ http://bseth99.github.com/projects/animate/A-tweenlite-exploding-effect.html
 http://bseth99.github.com/projects/animate/index.html
 http://bseth99.github.com/projects/canvas/1-html5-canvas-cracking-glass-effect.html
 http://bseth99.github.com/projects/canvas/2-html5-canvas-gradients.html
+http://bseth99.github.com/projects/canvas/3-html5-canvas-layers-blending.html
 http://bseth99.github.com/projects/canvas/index.html
 http://bseth99.github.com/projects/colorbox/demo-part-1.html
 http://bseth99.github.com/projects/colorbox/demo-part-2.html
