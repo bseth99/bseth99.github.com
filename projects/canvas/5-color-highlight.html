@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Animating the DOM in Javascript</title>
+    <title>jQuery Color Plugin - Highlight Colors</title>
     
     <meta name="author" content="Ben Olson">
 
@@ -210,7 +210,7 @@
       <div class="content">
         
 <div class="page-header">
-  <h3>Animating the DOM in Javascript </h3>
+  <h3>jQuery Color Plugin - Highlight Colors </h3>
 
 
 <hr style="margin: 0px"/>
@@ -220,7 +220,7 @@
 <!-- Place this tag where you want the +1 button to render. -->
 <div style="position: relative; top: -20px; text-align: right; height: 30px">
   <span><a href="http://benknowscode.wordpress.com">View Blog</a></span>&nbsp;&nbsp;
-  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/animate/index.html">View Source</a></span>&nbsp;&nbsp;
+  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/canvas/5-color-highlight.html">View Source</a></span>&nbsp;&nbsp;
   <div class="g-plusone" data-size="small"></div>
 </div>
 
@@ -237,206 +237,147 @@
 
 <div class="row">
   <div class="span12">
-    <p>The project has various demos designed to explore building components to support a custom animations with various animation engines over large sets of elements on non-linear paths.</p>
-
-<p>You can read more about this these tests <a href='http://benknowscode.wordpress.com'>on my blog</a>.</p>
-
-<h4 id='demo_pages'>Demo Pages</h4>
-<ul class='pages'>
-   
-   
-   
+    
 
 
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/animate/1-bresenham.html'>Bresenham's Algorithm Javascript Implementation Test</a></li>
-      	
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/animate/2-bezier-curves.html'>Path Interpolation Using Cubic Bezier and Control Point Estimation in Javascript</a></li>
-      	
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/animate/3-animate-custom-size.html'>Extending jQuery Animation - Custom Property "Size"</a></li>
-      	
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/animate/4-animate-multiple.html'>jQuery Animation - Multiple Elements Simultaneously</a></li>
-      	
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/animate/5-tweenlite-test.html'>TweenLite Animation Test</a></li>
-      	
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/animate/6-physics-easing-animations.html'>Javascript Physics - Using Easing to Animate Acceleration</a></li>
-      	
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/animate/7-jquery-sequencing-animations.html'>Managing Animation Sequences in jQuery</a></li>
-      	
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/animate/8-jquery-svg-animate.html'>Animating SVG in jQuery - The Impulse Wave Example</a></li>
-      	
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/animate/9-tweenlite-raphael-svg-timeline.html'>Using TweenLite Timelines - The Impulse Wave Example Revisited</a></li>
-      	
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/animate/A-tweenlite-exploding-effect.html'>Javascript Physics - Creating an Explosion Effect</a></li>
-      	
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
+<script src="colorpicker/jquery.colorpicker.js"></script>
+<link href="colorpicker/jquery.colorpicker.css" rel="stylesheet" type="text/css"/>
+<script src="colorpicker/i18n/jquery.ui.colorpicker-en.js"></script>
+
+<script src="jquery-color.js"></script>
+
+<style>
+
+.labelbox {
+   display: inline-block;
+   width: 50px;
+}
+
+.colorbox {
+   border: 1px solid black;
+   display: inline-block;
+   height: 50px;
+   width: 50px;
+}
+
+.outputbox {
+   border: 2px solid #ffffff;
+   width: 200px;
+   padding: 5px;
+}
+
+#colorpicker {
+   position: absolute;
+   z-index: 1000;
+}
+
+#colorselect {
+   width: 120px;
+}
+
+</style>
+
+<div class="discussion">
+A simple example of using the jQuery Color plugin to dynamically find a highlight color to use on the
+border of a div based on the background color.  This demo used the jQuery ColorPicker
+(<a href="https://github.com/vanderlee/colorpicker">github.com/vanderlee/colorpicker</a>) to select
+the main color and then find a suitable complemtary highlight color using the lightness() extension
+available in the Color plugin.  Click the main color swatch to change the color and see the results.
+</div>
+
+<div id="colorpicker"></div>
+
+<div class="wrapper">
+  <div class="labelbox">Main</div>
+  <div class="labelbox">Highlight</div>
+</div>
+
+<div id="colorselect" class="wrapper">
+  <div class="colorbox"></div>
+  <div class="colorbox"></div>
+</div>
+
+<div class="wrapper">
+  <div id="myDiv" class="outputbox">
+    This is a box with the select
+    color as the background and the
+    calculated highlight as the border.
+  </div>
+</div>
+
+<script>
+
+jQuery.Color.fn.contrastColor = function() {
+    var r = this._rgba[0], g = this._rgba[1], b = this._rgba[2];
+    return (((r*299)+(g*587)+(b*144))/1000) >= 131.5 ? "black" : "white";
+};
+
+$(function()
+{
+   var $colorSelect = $('#colorselect'),
+       $colorMain = $colorSelect.children().eq(0),
+       $colorHighlight = $colorSelect.children().eq(1),
+       $myDiv = $('#myDiv');
+
+   function update(e, ui)
+   {
+      var cl, nc, nn;
+
+      if (!ui) return;
+
+      cl = jQuery.Color(ui.formatted);
+      nn = cl.lightness();
+      nc = cl.lightness( (nn > 0.5 ? nn : (1-nn)) / 2);
 
 
+      $colorMain.css('background-color', cl);
+      $colorHighlight.css('background-color', nc);
 
-</ul>
+      $myDiv.css({
+          backgroundColor: cl,
+          borderColor: nc,
+          color: cl.contrastColor()
+        });
+   }
+
+   $(document).click(function (e)
+      {
+         $('#colorpicker')
+              .hide();
+
+         update();
+      });
+
+   $colorMain.click(function (e)
+     {
+        var $el = $(this),
+            $align = $('#colorselect');
+
+        $('#colorpicker')
+           .show()
+           .colorpicker('setColor', $colorMain.css('background-color'))
+           .position({
+                 my: 'left+10, top',
+                 at: 'right, top',
+                 of: $colorSelect
+              });
+
+        e.stopPropagation();
+
+     });
+
+   $('#colorpicker')
+        .hide()
+        .colorpicker({
+             colorFormat: 'RGB',
+             select: update
+           })
+        .click(function (e) { e.stopPropagation(); } );
+
+   update(null, {formatted: 'rgba(255,0,0,1)'});
+});
+
+</script>
   </div>
 </div>
 

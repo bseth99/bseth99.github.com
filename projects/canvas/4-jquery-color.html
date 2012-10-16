@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Animating the DOM in Javascript</title>
+    <title>jQuery Color Plugin - The Magic Behind Color Animation</title>
     
     <meta name="author" content="Ben Olson">
 
@@ -210,7 +210,7 @@
       <div class="content">
         
 <div class="page-header">
-  <h3>Animating the DOM in Javascript </h3>
+  <h3>jQuery Color Plugin - The Magic Behind Color Animation </h3>
 
 
 <hr style="margin: 0px"/>
@@ -220,7 +220,7 @@
 <!-- Place this tag where you want the +1 button to render. -->
 <div style="position: relative; top: -20px; text-align: right; height: 30px">
   <span><a href="http://benknowscode.wordpress.com">View Blog</a></span>&nbsp;&nbsp;
-  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/animate/index.html">View Source</a></span>&nbsp;&nbsp;
+  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/canvas/4-jquery-color.html">View Source</a></span>&nbsp;&nbsp;
   <div class="g-plusone" data-size="small"></div>
 </div>
 
@@ -237,206 +237,114 @@
 
 <div class="row">
   <div class="span12">
-    <p>The project has various demos designed to explore building components to support a custom animations with various animation engines over large sets of elements on non-linear paths.</p>
-
-<p>You can read more about this these tests <a href='http://benknowscode.wordpress.com'>on my blog</a>.</p>
-
-<h4 id='demo_pages'>Demo Pages</h4>
-<ul class='pages'>
-   
-   
-   
+    
 
 
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/animate/1-bresenham.html'>Bresenham's Algorithm Javascript Implementation Test</a></li>
-      	
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/animate/2-bezier-curves.html'>Path Interpolation Using Cubic Bezier and Control Point Estimation in Javascript</a></li>
-      	
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/animate/3-animate-custom-size.html'>Extending jQuery Animation - Custom Property "Size"</a></li>
-      	
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/animate/4-animate-multiple.html'>jQuery Animation - Multiple Elements Simultaneously</a></li>
-      	
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/animate/5-tweenlite-test.html'>TweenLite Animation Test</a></li>
-      	
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/animate/6-physics-easing-animations.html'>Javascript Physics - Using Easing to Animate Acceleration</a></li>
-      	
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/animate/7-jquery-sequencing-animations.html'>Managing Animation Sequences in jQuery</a></li>
-      	
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/animate/8-jquery-svg-animate.html'>Animating SVG in jQuery - The Impulse Wave Example</a></li>
-      	
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/animate/9-tweenlite-raphael-svg-timeline.html'>Using TweenLite Timelines - The Impulse Wave Example Revisited</a></li>
-      	
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/animate/A-tweenlite-exploding-effect.html'>Javascript Physics - Creating an Explosion Effect</a></li>
-      	
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
+<script src="jquery-color.js"></script>
 
+<style>
+.wrapper {
+   display: inline-block;
+   margin: 1px;
+   border: 1px dotted silver;
+}
 
+.color {
+   vertical-align: top;
+   font-size: 6pt;
+   margin: 3px;
+   width: 125px;
+}
 
-</ul>
+.box {
+   display: inline-block;
+   height: 20px;
+   width: 50px;
+   border: 1px solid dimgray;
+}
+
+.values {
+   display: inline-block;
+   margin-left: 1px;
+}
+
+</style>
+
+<div class="discussion">
+Show how easy jQuery.Color makes working with colors.  You can seamlessly switch between
+RGB and HSL color spaces and use the one which works best for the type of manipulation you need
+to achieve.  In this example, I want to incrementally change the lightness of the color until
+it is either white or black.  I created colors using names, hash values, rgb(), and hsl() - all
+conveniently parsed by the plugin.  jQuery UI uses this plugin to before color animation effects.
+However, you can also use it separately since its maintained independantly of jQuery UI
+(<a href="https://github.com/jquery/jquery-color">github.com/jquery/jquery-color</a>)
+or, if you use jQuery UI, its already there.
+<br/><br/>
+
+As of writing this example, the plugin does not handle converting RGB white to HSL white correctly.
+The saturation of all grey-scale colors should be 0%
+(<a href="http://en.wikipedia.org/wiki/HSL_and_HSV#Saturation">based on the Wikipedia</a>).
+
+If white uses 100% saturation, changing its lightness from 100% will result in shades of red:
+<br/><br/>
+<a href="http://jsfiddle.net/bseth99/xxuvk/">jsfiddle.net/bseth99/xxuvk</a>
+<br/><br/>
+This page uses the fix I've proposed to handle the conversion properly.
+
+</div>
+
+<div id="render"></div>
+
+<script>
+
+$(function()
+{
+   var $rdr = $('#render');
+
+   $.each(['black', 'white', 'rgb(80,80,80)', 'hsl(0,0%,70%)',
+           'red', 'blue', 'green', 'yellow',
+           'fuchsia', 'rgb(238,116,238)', 'hsl(14,82%,62%)', '#ffa500'], function (idx)
+      {
+         var $wrp, $val, cdf,
+             color = this,
+             clr = jQuery.Color(color),
+             now = clr.lightness(),
+             step = (now > 0.5 ? 0 - now : 1 - now) / 10;
+
+         if (idx % 4 == 0) $rdr.append('<br/>');
+
+         $wrp = $('<div>')
+                     .addClass('wrapper')
+                     .html('<span><center>'+color+'</center></span>')
+                     .appendTo($rdr);
+
+         for (var i=0;i<=10;i++)
+         {
+            cdf = clr.lightness(now + step * i);
+
+            $val = $('<div>')
+                      .addClass('color')
+                      .appendTo($wrp);
+
+            $val.append(
+               $('<div>')
+                  .addClass('box')
+                  .css('background-color', cdf)
+                  .appendTo($val)
+             );
+
+            $val.append(
+               $('<div>')
+                  .addClass('values')
+                  .html(cdf.toRgbaString()+'<br/>'+cdf.toHslaString())
+             );
+         }
+
+      });
+});
+
+</script>
+
   </div>
 </div>
 
