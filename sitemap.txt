@@ -24,6 +24,8 @@ http://bseth99.github.com/projects/colorbox/demo-part-3.html
 http://bseth99.github.com/projects/colorbox/index.html
 http://bseth99.github.com/projects/colorbox/sortable-draggable.html
 http://bseth99.github.com/projects/index.html
+http://bseth99.github.com/projects/jquery-ui/1-jquery-ui-spinner.html
+http://bseth99.github.com/projects/jquery-ui/index.html
 http://bseth99.github.com/projects/rotate/1-rotate-position.html
 http://bseth99.github.com/projects/rotate/1-rotate-position2.html
 http://bseth99.github.com/projects/rotate/2-alignment.html
