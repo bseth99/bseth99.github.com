@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>jQuery Color Plugin - The Magic Behind Color Animation</title>
+    <title>Creating SVG Paths with Raphael</title>
     
     <meta name="author" content="Ben Olson">
 
@@ -238,7 +238,7 @@
       <div class="content">
         
 <div class="page-header">
-  <h3>jQuery Color Plugin - The Magic Behind Color Animation </h3>
+  <h3>Creating SVG Paths with Raphael </h3>
 
 
 <hr style="margin: 0px"/>
@@ -247,8 +247,8 @@
 
 <!-- Place this tag where you want the +1 button to render. -->
 <div style="position: relative; top: -20px; text-align: right; height: 30px">
-  <span><a href="http://benknowscode.wordpress.com/2012/10/16/color-made-easy-with-the-jquery-color-plugin/">View Blog</a></span>&nbsp;&nbsp;
-  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/canvas/4-jquery-color.html">View Source</a></span>&nbsp;&nbsp;
+  <span><a href="http://benknowscode.wordpress.com/2012/10/31/building-svg-paths-with-raphael/">View Blog</a></span>&nbsp;&nbsp;
+  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/svg/3-raphael-svg-paths.html">View Source</a></span>&nbsp;&nbsp;
   <div class="g-plusone" data-size="small"></div>
 </div>
 
@@ -267,108 +267,80 @@
   <div class="span12">
     
 
+<!--
+Copyright (c) 2012 Ben Olson
 
-<script src="jquery-color.js"></script>
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+-->
+
 
 <style>
-.wrapper {
-   display: inline-block;
-   margin: 1px;
-   border: 1px dotted silver;
-}
-
-.color {
-   vertical-align: top;
-   font-size: 6pt;
-   margin: 3px;
-   width: 125px;
-}
-
-.box {
-   display: inline-block;
-   height: 20px;
-   width: 50px;
-   border: 1px solid dimgray;
-}
-
-.values {
-   display: inline-block;
-   margin-left: 1px;
-}
-
+.wrapper { position: relative; }
 </style>
 
+<script src="raphael.min.js"></script>
+
 <div class="discussion">
-Show how easy jQuery.Color makes working with colors.  You can seamlessly switch between
-RGB and HSL color spaces and use the one which works best for the type of manipulation you need
-to achieve.  In this example, I want to incrementally change the lightness of the color until
-it is either white or black.  I created colors using names, hash values, rgb(), and hsl() - all
-conveniently parsed by the plugin.  jQuery UI uses this plugin to before color animation effects.
-However, you can also use it separately since its maintained independantly of jQuery UI
-(<a href="https://github.com/jquery/jquery-color">github.com/jquery/jquery-color</a>)
-or, if you use jQuery UI, its already there.
-<br/><br/>
-
-As of writing this example, the plugin does not handle converting RGB white to HSL white correctly.
-The saturation of all grey-scale colors should be 0%
-(<a href="http://en.wikipedia.org/wiki/HSL_and_HSV#Saturation">based on the Wikipedia</a>).
-
-If white uses 100% saturation, changing its lightness from 100% will result in shades of red:
-<br/><br/>
-<a href="http://jsfiddle.net/bseth99/xxuvk/">jsfiddle.net/bseth99/xxuvk</a>
-<br/><br/>
-This page uses the fix I've proposed to handle the conversion properly.
-
+A quick example of constructing paths with Raphael.  The path() function can accept an array describing
+the path.  This helps make it easier to see the path definition as well as enable the possibility of writing
+functions that can generate basic paths based on a set of inputs.  Other functionality in Raphael only works
+with paths so it is desirable to use them when possible so these features are available.
 </div>
 
-<div id="render"></div>
+<div class="wrapper">
+</div>
 
 <script>
 
 $(function()
 {
-   var $rdr = $('#render');
+   var paper = Raphael( $('.wrapper')[0], 600, 600 ),
 
-   $.each(['black', 'white', 'rgb(80,80,80)', 'hsl(0,0%,70%)',
-           'red', 'blue', 'green', 'yellow',
-           'fuchsia', 'rgb(238,116,238)', 'hsl(14,82%,62%)', '#ffa500'], function (idx)
-      {
-         var $wrp, $val, cdf,
-             color = this,
-             clr = jQuery.Color(color),
-             now = clr.lightness(),
-             step = (now > 0.5 ? 0 - now : 1 - now) / 10;
+       pstr = "M295.186,122.908c12.434,18.149,32.781,18.149,45.215,0l12.152-17.736c12.434-18.149,22.109-15.005,21.5,6.986l-0.596,21.49c-0.609,21.992,15.852,33.952,36.579,26.578l20.257-7.207c20.728-7.375,26.707,0.856,13.288,18.29l-13.113,17.037c-13.419,17.434-7.132,36.784,13.971,43.001l20.624,6.076c21.103,6.217,21.103,16.391,0,22.608l-20.624,6.076c-21.103,6.217-27.39,25.567-13.971,43.001l13.113,17.037c13.419,17.434,7.439,25.664-13.287,18.289l-20.259-7.207c-20.727-7.375-37.188,4.585-36.578,26.576l0.596,21.492c0.609,21.991-9.066,25.135-21.5,6.986L340.4,374.543c-12.434-18.148-32.781-18.148-45.215,0.001l-12.152,17.736c-12.434,18.149-22.109,15.006-21.5-6.985l0.595-21.492c0.609-21.991-15.851-33.951-36.578-26.576l-20.257,7.207c-20.727,7.375-26.707-0.855-13.288-18.29l13.112-17.035c13.419-17.435,7.132-36.785-13.972-43.002l-20.623-6.076c-21.104-6.217-21.104-16.391,0-22.608l20.623-6.076c21.104-6.217,27.391-25.568,13.972-43.002l-13.112-17.036c-13.419-17.434-7.439-25.664,13.288-18.29l20.256,7.207c20.728,7.374,37.188-4.585,36.579-26.577l-0.595-21.49c-0.609-21.992,9.066-25.136,21.5-6.986L295.186,122.908z",
+       path1 = paper.path( Raphael.transformPath(pstr, 't-50,-60r125s0.5') )
+                   .attr( 'stroke-width', 3 )
+                   .attr( 'stroke', 'rgb(255,80,80)' ),
 
-         if (idx % 4 == 0) $rdr.append('<br/>');
+       path2 = paper.path( [
+										['M',450,175],
+										['l',0,90],
+										['a',10,10,0,0,1,-10,10],
+										['l',-390,0],
+										['a',10,10,0,0,1,-10,-10],
+										['l',0,-190],
+										['a',10,10,0,0,1,10,-10],
+										['l',390,0],
+										['a',10,10,0,0,1,10,10],
+										['l',0,90],
+										['z']
+									] )
+                   .attr( 'stroke-width', 3 )
+                   .attr( 'stroke', 'rgb(80,255,80)' ),
 
-         $wrp = $('<div>')
-                     .addClass('wrapper')
-                     .html('<span><center>'+color+'</center></span>')
-                     .appendTo($rdr);
 
-         for (var i=0;i<=10;i++)
-         {
-            cdf = clr.lightness(now + step * i);
+       path3 = paper.path( Raphael._getPath.circle({ attrs: { cx:120, cy:120, r:50 } }))
+                   .attr( 'stroke-width', 3 )
+                   .attr( 'stroke', 'rgb(80,80,255)' );
 
-            $val = $('<div>')
-                      .addClass('color')
-                      .appendTo($wrp);
-
-            $val.append(
-               $('<div>')
-                  .addClass('box')
-                  .css('background-color', cdf)
-                  .appendTo($val)
-             );
-
-            $val.append(
-               $('<div>')
-                  .addClass('values')
-                  .html(cdf.toRgbaString()+'<br/>'+cdf.toHslaString())
-             );
-         }
-
-      });
 });
 
 </script>
