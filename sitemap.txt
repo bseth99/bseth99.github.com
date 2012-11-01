@@ -39,6 +39,7 @@ http://bseth99.github.com/projects/rotate/index.html
 http://bseth99.github.com/projects/svg/1-jquery-svg.html
 http://bseth99.github.com/projects/svg/2-svg-progress-bar.html
 http://bseth99.github.com/projects/svg/3-raphael-svg-paths.html
+http://bseth99.github.com/projects/svg/4-raphael-svg-slider.html
 http://bseth99.github.com/projects/svg/index.html
 http://bseth99.github.com/sitemap.txt
 http://bseth99.github.com/tags.html
