@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>jQuery UI Demo - Custom ColorBox Widget</title>
+    <title>Using Raphael Sets to Mimic SVG Groups</title>
     
     <meta name="author" content="Ben Olson">
 
@@ -246,7 +246,7 @@
       <div class="content">
         
 <div class="page-header">
-  <h3>jQuery UI Demo - Custom ColorBox Widget </h3>
+  <h3>Using Raphael Sets to Mimic SVG Groups </h3>
 
 
 <hr style="margin: 0px"/>
@@ -256,7 +256,7 @@
 <!-- Place this tag where you want the +1 button to render. -->
 <div style="position: relative; top: -20px; text-align: right; height: 30px">
   <span><a href="http://benknowscode.wordpress.com">View Blog</a></span>&nbsp;&nbsp;
-  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/colorbox/index.html">View Source</a></span>&nbsp;&nbsp;
+  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/svg/5-raphael-svg-sets.html">View Source</a></span>&nbsp;&nbsp;
   <div class="g-plusone" data-size="small"></div>
 </div>
 
@@ -273,216 +273,123 @@
 
 <div class="row">
   <div class="span12">
-    <p>ColorBox is a simple jQuery UI based widget to demostrate the how to construct a custom UI widget from the jQuery UI framework. Each part progresses to add functionality and address various issues and ideas about how to extend and work with this framework. You can read more about this demo <a href='http://benknowscode.wordpress.com/category/projects/jquery-ui-widgets/'>on my blog</a></p>
+    
 
-<h4 id='demo_pages'>Demo Pages</h4>
-<ul class='pages'>
-   
-   
-   
+<!--
+Copyright (c) 2012 Ben Olson
 
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
 
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/colorbox/demo-part-1.html'>jQuery UI Demo (Part 1) - Using Widgets</a></li>
-      	
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/colorbox/demo-part-2.html'>jQuery UI Demo (Part 2) - Custom ColorBox Widget</a></li>
-      	
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/colorbox/demo-part-3.html'>jQuery UI Demo (Part 3) - Proxy Overrides</a></li>
-      	
-      
-    
-  
-    
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/colorbox/sortable-draggable.html'>jQuery UI Demo - Overlapping Functionality</a></li>
-      	
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+-->
+
+<style>
+.wrapper { position: relative; height: 300px; width: 400px; font-size: 12pt }
+</style>
+
+<script src="raphael.min.js"></script>
+
+<div class="discussion">
+This demo shows how to use Raphael sets to mimic the SVG grouping tag.  Since Raphael
+can support both SVG and VML, it abstracts the vector element rendering and exposes
+API functions to affect those objects.  To remain capatible, all the SVG features are not
+available.  However, sets provide a mechanism to mimic the features of groups in SVG.  The
+demo tries to replicate the SVG documenton on the
+<a href="http://www.w3.org/TR/SVG/images/paths/arcs02.svg">W3 site related to SVG arcs</a>.
+</div>
+<br/>
+
+<div class="wrapper">
+</div>
+
+<script>
+
+// Recreate the reference document using Raphael
+// http://www.w3.org/TR/SVG/images/paths/arcs02.svg
+
+$(function()
+{
+   var r = Raphael( $('.wrapper')[0], '12cm', '5.25cm' ).setViewBox(0,0,1200,525,false),
+       g1 = r.set(),
+       g2, attr;
+
+   attr = { 'stroke':'#888888',  'stroke-width':'2' };
+   g1.push( r.ellipse(125,125,100,50).attr(attr) );
+   g1.push( r.ellipse(225,75,100,50).attr(attr) );
+
+   attr = { 'text-anchor': 'left', 'font':'1.3em "Verdana"' };
+   g1.push( r.text(70,60,'Arc start').attr(attr) );
+   g1.push( r.text(270,140,'Arc end').attr(attr) );
 
 
+   g2 = g1.clone();
 
-</ul>
+   attr = { 'stroke':'red',  'stroke-width':'6' };
+   g2.push( r.path('M 125,75 a100,50 0 0,0 100,50').attr(attr) );
+
+   attr = { 'text-anchor': 'left', 'font':'1.5em "Verdana"' };
+   g2.push( r.text(150,210,'large-arc-flag=0').attr(attr) );
+   g2.push( r.text(150,250,'sweep-flag=0').attr(attr) );
+
+   g2.transform('t400,0');
+
+
+   g2 = g1.clone();
+
+   attr = { 'stroke':'red',  'stroke-width':'6' };
+   g2.push( r.path('M 125,75 a100,50 0 0,1 100,50').attr(attr) );
+
+   attr = { 'text-anchor': 'left', 'font':'1.5em "Verdana"' };
+   g2.push( r.text(150,210,'large-arc-flag=0').attr(attr) );
+   g2.push( r.text(150,250,'sweep-flag=1').attr(attr) );
+
+   g2.transform('t800,0');
+
+
+   g2 = g1.clone();
+
+   attr = { 'stroke':'red',  'stroke-width':'6' };
+   g2.push( r.path('M 125,75 a100,50 0 1,0 100,50').attr(attr) );
+
+   attr = { 'text-anchor': 'left', 'font':'1.5em "Verdana"' };
+   g2.push( r.text(150,210,'large-arc-flag=1').attr(attr) );
+   g2.push( r.text(150,250,'sweep-flag=0').attr(attr) );
+
+   g2.transform('t400,250');
+
+
+   g2 = g1.clone();
+
+   attr = { 'stroke':'red',  'stroke-width':'6' };
+   g2.push( r.path('M 125,75 a100,50 0 1,1 100,50').attr(attr) );
+
+   attr = { 'text-anchor': 'left', 'font':'1.5em "Verdana"' };
+   g2.push( r.text(150,210,'large-arc-flag=1').attr(attr) );
+   g2.push( r.text(150,250,'sweep-flag=1').attr(attr) );
+
+   g2.transform('t800,250');
+
+});
+
+</script>
+
   </div>
 </div>
 
