@@ -35,6 +35,7 @@ http://bseth99.github.com/projects/rotate/1-rotate-position2.html
 http://bseth99.github.com/projects/rotate/2-alignment.html
 http://bseth99.github.com/projects/rotate/3-circle-align.html
 http://bseth99.github.com/projects/rotate/4-css-transform.html
+http://bseth99.github.com/projects/rotate/5-css-3d-rotate.html
 http://bseth99.github.com/projects/rotate/index.html
 http://bseth99.github.com/projects/svg/1-jquery-svg.html
 http://bseth99.github.com/projects/svg/2-svg-progress-bar.html

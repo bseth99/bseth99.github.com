@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Using Raphael Sets to Mimic SVG Groups</title>
+    <title>CSS3 3D Rotation Tests</title>
     
     <meta name="author" content="Ben Olson">
 
@@ -250,7 +250,7 @@
       <div class="content">
         
 <div class="page-header">
-  <h3>Using Raphael Sets to Mimic SVG Groups </h3>
+  <h3>CSS3 3D Rotation Tests </h3>
 
 
 <hr style="margin: 0px"/>
@@ -259,8 +259,8 @@
 
 <!-- Place this tag where you want the +1 button to render. -->
 <div style="position: relative; top: -20px; text-align: right; height: 30px">
-  <span><a href="http://benknowscode.wordpress.com/2012/11/13/using-raphael-sets-to-mimic-svg-groups/">View Blog</a></span>&nbsp;&nbsp;
-  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/svg/5-raphael-svg-sets.html">View Source</a></span>&nbsp;&nbsp;
+  <span><a href="http://benknowscode.wordpress.com">View Blog</a></span>&nbsp;&nbsp;
+  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/rotate/5-css-3d-rotate.html">View Source</a></span>&nbsp;&nbsp;
   <div class="g-plusone" data-size="small"></div>
 </div>
 
@@ -305,95 +305,277 @@ OTHER DEALINGS IN THE SOFTWARE.
 -->
 
 <style>
-.wrapper { position: relative; height: 300px; width: 400px; font-size: 12pt }
+
+button span { font-size: 0.7em; }
+
+.wrapper {
+    position: relative;
+    margin: 50px;
+    margin-top: 100px;
+    margin-bottom: 100px;
+    width: 350px;
+    height:30px;
+ }
+
+.outer {
+    position: absolute;
+    width: 350px;
+    height:30px;
+    border: 1px dotted red;
+ }
+
+.inner {
+    position: absolute;
+    width: 350px;
+    height:30px;
+    border: 1px dotted green;
+ }
+
+.box {
+    position: absolute;
+    background-color: #fff;
+    left: 140px;
+    width: 75px;
+    height: 30px;
+    line-height: 30px;
+    font-weight: bold;
+    text-align: center;
+    border: 1px solid lightblue;
+}
+
+.sliders {
+   margin-left: 50px;
+}
+
+.sliders div {
+   line-height: 30px;
+}
+
+.sliders div div {
+   margin-left: 5px;
+   display: inline-block;
+   font-size: 8pt;
+   width: 400px;
+}
+
 </style>
 
-<script src="raphael.min.js"></script>
-
 <div class="discussion">
-This demo shows how to use Raphael sets to mimic the SVG grouping tag.  Since Raphael
-can support both SVG and VML, it abstracts the vector element rendering and exposes
-API functions to affect those objects.  To remain capatible, all the SVG features are not
-available.  However, sets provide a mechanism to mimic the features of groups in SVG.  The
-demo tries to replicate the SVG documenton on the
-<a href="http://www.w3.org/TR/SVG/images/paths/arcs02.svg">W3 site related to SVG arcs</a>.
+A test of CSS3 3D transforms.  Specifically, rotating objects in 3D space using perspective and transformOrigin
+to set the z-axis to rotate around.  This will cause the DIVs to appear to move around that point.  Different
+DIVs are embedded to control X,Y,Z axis.  Use the sliders to rotate each div.  The "P" and "O" sliders will
+adjust the <code>perspective</code> and z-axis of the <code>transform-origin</code> styles, respectively.
+
+Disable the transform to see the starting point without a transform applied.  Show the guides to see the
+borders of the other container DIVs as a reference.
 </div>
 <br/>
 
+<div class="actions">
+  <button id="transform">Disable Transform</button>
+  <button id="guides">Show Guides</button>
+  <br/>
+
+  <div class="sliders">
+
+    <div>
+       X: <div id="rotateX"></div>
+    </div>
+
+    <div>
+       Y: <div id="rotateY"></div>
+    </div>
+
+    <div>
+       Z: <div id="rotateZ"></div>
+    </div>
+
+    <div>
+       P: <div id="perspective"></div>
+    </div>
+
+    <div>
+       O: <div id="origin"></div>
+    </div>
+
+  </div>
+</div>
+
 <div class="wrapper">
+	<div class="outer">
+		<div class="inner">
+		  <div class="box">One</div>
+		  <div class="box">Two</div>
+		  <div class="box">Three</div>
+		  <div class="box">Four</div>
+		  <div class="box">Five</div>
+		</div>
+	</div>
 </div>
 
 <script>
 
-// Recreate the reference document using Raphael
-// http://www.w3.org/TR/SVG/images/paths/arcs02.svg
+function enableTransform () {
+
+   rotateX($('#rotateX').slider( 'value' ));
+   rotateY($('#rotateY').slider( 'value' ));
+   rotateZ($('#rotateZ').slider( 'value' ));
+
+}
+
+function disableTransform () {
+
+   $('.wrapper div').css({
+   		transform: ''
+      });
+
+}
+
+function showGuides () {
+
+   $('.wrapper div').not('.box').css({
+   		borderWidth: '1px'
+      });
+
+}
+
+function hideGuides () {
+
+   $('.wrapper div').not('.box').css({
+   		borderWidth: '0px'
+      });
+
+}
+
+function rotateX( off ) {
+
+   $('.outer').css( 'transform', 'rotateX('+off+'deg)' );
+}
+
+function rotateY( off ) {
+
+   var $box, cnt;
+
+   $box = $('.box');
+   cnt = $box.length;
+
+   $box.each(function (i, e)
+   	{
+   		$(e).css( 'transform', 'rotateY('+Math.round( ( 360/cnt*i + off ) % 360 )+'deg)' );
+   	});
+}
+
+function rotateZ( off ) {
+
+   $('.inner').css( 'transform', 'rotateZ('+off+'deg)' );
+}
 
 $(function()
 {
-   var r = Raphael( $('.wrapper')[0], '12cm', '5.25cm' ).setViewBox(0,0,1200,525,false),
-       g1 = r.set(),
-       g2, attr;
 
-   attr = { 'stroke':'#888888',  'stroke-width':'2' };
-   g1.push( r.ellipse(125,125,100,50).attr(attr) );
-   g1.push( r.ellipse(225,75,100,50).attr(attr) );
+   $('.wrapper').css({
+         perspective: '800px'
+      });
 
-   attr = { 'text-anchor': 'left', 'font':'1.3em "Verdana"' };
-   g1.push( r.text(70,60,'Arc start').attr(attr) );
-   g1.push( r.text(270,140,'Arc end').attr(attr) );
+   $('.wrapper div').css({
+   		transformOrigin: '50% 50% -100px',
+   		transformStyle: 'preserve-3d'
+      });
 
 
-   g2 = g1.clone();
-
-   attr = { 'stroke':'red',  'stroke-width':'6' };
-   g2.push( r.path('M 125,75 a100,50 0 0,0 100,50').attr(attr) );
-
-   attr = { 'text-anchor': 'left', 'font':'1.5em "Verdana"' };
-   g2.push( r.text(150,210,'large-arc-flag=0').attr(attr) );
-   g2.push( r.text(150,250,'sweep-flag=0').attr(attr) );
-
-   g2.transform('t400,0');
+   $('.box').css({
+   		borderRadius: '4px',
+   		/* boxShadow: '0px 0px 4px lightblue' buggy in Firefox when 3D transforms applied - causes awful flickering :( */
+      });
 
 
-   g2 = g1.clone();
-
-   attr = { 'stroke':'red',  'stroke-width':'6' };
-   g2.push( r.path('M 125,75 a100,50 0 0,1 100,50').attr(attr) );
-
-   attr = { 'text-anchor': 'left', 'font':'1.5em "Verdana"' };
-   g2.push( r.text(150,210,'large-arc-flag=0').attr(attr) );
-   g2.push( r.text(150,250,'sweep-flag=1').attr(attr) );
-
-   g2.transform('t800,0');
+   $('#rotateX').slider({ min: 0, max: 360,
+         value: 25,
+   		slide: function ( e, ui ) {
+   				rotateX( ui.value );
+   			}
+   	});
 
 
-   g2 = g1.clone();
-
-   attr = { 'stroke':'red',  'stroke-width':'6' };
-   g2.push( r.path('M 125,75 a100,50 0 1,0 100,50').attr(attr) );
-
-   attr = { 'text-anchor': 'left', 'font':'1.5em "Verdana"' };
-   g2.push( r.text(150,210,'large-arc-flag=1').attr(attr) );
-   g2.push( r.text(150,250,'sweep-flag=0').attr(attr) );
-
-   g2.transform('t400,250');
+   $('#rotateY').slider({ min: 0, max: 360,
+         value: 10,
+   		slide: function ( e, ui ) {
+   				rotateY( ui.value );
+   			}
+   	});
 
 
-   g2 = g1.clone();
+   $('#rotateZ').slider({ min: 0, max: 360,
+         value: 25,
+   		slide: function ( e, ui ) {
+   				rotateZ( ui.value );
+   			}
+   	});
 
-   attr = { 'stroke':'red',  'stroke-width':'6' };
-   g2.push( r.path('M 125,75 a100,50 0 1,1 100,50').attr(attr) );
+   $('#perspective').slider({ min: 200, max: 1000,
+         value: 800,
+   		slide: function ( e, ui ) {
+					$('.wrapper').css({
+							perspective: ui.value + 'px'
+						});
+   			}
+   	});
 
-   attr = { 'text-anchor': 'left', 'font':'1.5em "Verdana"' };
-   g2.push( r.text(150,210,'large-arc-flag=1').attr(attr) );
-   g2.push( r.text(150,250,'sweep-flag=1').attr(attr) );
 
-   g2.transform('t800,250');
+   $('#origin').slider({ min: 0, max: 225,
+         value: 100,
+   		slide: function ( e, ui ) {
+					$('.wrapper div').css({
+							transformOrigin: '50% 50% -'+ ui.value +'px'
+						});
+   			}
+   	});
+
+   $('button').button()
+   		.click( function ( e ) {
+
+               var $el = $(this);
+
+   				if ( this.id == 'transform' ) {
+
+   					if ( $el.button( 'option', 'label' ) == 'Disable Transform' ) {
+
+   						$el.button( 'option', 'label', 'Enable Transform' );
+   						disableTransform();
+
+   					} else {
+
+							$el.button( 'option', 'label', 'Disable Transform' );
+   						enableTransform();
+
+   					}
+
+   				} else {
+
+   					if ( $el.button( 'option', 'label' ) == 'Show Guides' ) {
+
+							$el.button( 'option', 'label', 'Hide Guides' );
+   						showGuides();
+
+   					} else {
+
+							$el.button( 'option', 'label', 'Show Guides' );
+   						hideGuides();
+
+   					}
+
+   				}
+   			});
+
+   enableTransform();
+   hideGuides();
 
 });
 
 </script>
 
+</body>
+</html>
   </div>
 </div>
 
