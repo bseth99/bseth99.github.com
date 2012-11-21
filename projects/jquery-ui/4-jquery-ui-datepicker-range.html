@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>jQuery Color Plugin - Highlight Colors</title>
+    <title>jQuery UI Datepicker - Range Selection with Only One Control</title>
     
     <meta name="author" content="Ben Olson">
 
@@ -254,7 +254,7 @@
       <div class="content">
         
 <div class="page-header">
-  <h3>jQuery Color Plugin - Highlight Colors </h3>
+  <h3>jQuery UI Datepicker - Range Selection with Only One Control </h3>
 
 
 <hr style="margin: 0px"/>
@@ -263,8 +263,8 @@
 
 <!-- Place this tag where you want the +1 button to render. -->
 <div style="position: relative; top: -20px; text-align: right; height: 30px">
-  <span><a href="http://benknowscode.wordpress.com/2012/10/16/color-made-easy-with-the-jquery-color-plugin/">View Blog</a></span>&nbsp;&nbsp;
-  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/canvas/5-color-highlight.html">View Source</a></span>&nbsp;&nbsp;
+  <span><a href="http://benknowscode.wordpress.com">View Blog</a></span>&nbsp;&nbsp;
+  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/jquery-ui/4-jquery-ui-datepicker-range.html">View Source</a></span>&nbsp;&nbsp;
   <div class="g-plusone" data-size="small"></div>
 </div>
 
@@ -283,145 +283,111 @@
   <div class="span12">
     
 
-
-<script src="colorpicker/jquery.colorpicker.js"></script>
-<link href="colorpicker/jquery.colorpicker.css" rel="stylesheet" type="text/css"/>
-<script src="colorpicker/i18n/jquery.ui.colorpicker-en.js"></script>
-
-<script src="jquery-color.js"></script>
+<div class="discussion">
+In this example, I wanted to try to add range selection to the jQuery UI Datepicker.  Its one of the
+features I'm interested in providing to my users.  My preference is to use the jQuery UI widgets when possible
+simply because there is a consistent look-and-feel across the library.  I found other libraries that provide
+the features but do not work as well overall as the jQuery version.
+</div>
+<br/>
 
 <style>
-
-.labelbox {
-   display: inline-block;
-   width: 50px;
+.wrapper {
+   height: 600px;
 }
 
-.colorbox {
-   border: 1px solid black;
-   display: inline-block;
-   height: 50px;
-   width: 50px;
-}
-
-.outputbox {
-   border: 2px solid #ffffff;
+#jrange input {
    width: 200px;
-   padding: 5px;
 }
 
-#colorpicker {
-   position: absolute;
-   z-index: 1000;
+#jrange div {
+   font-size: 9pt;
 }
 
-#colorselect {
-   width: 120px;
+.date-range-selected > .ui-state-active,
+.date-range-selected > .ui-state-default {
+   background: none;
+   background-color: lightsteelblue;
 }
-
 </style>
 
-<div class="discussion">
-A simple example of using the jQuery Color plugin to dynamically find a highlight color to use on the
-border of a div based on the background color.  This demo used the jQuery ColorPicker
-(<a href="https://github.com/vanderlee/colorpicker">github.com/vanderlee/colorpicker</a>) to select
-the main color and then find a suitable complemtary highlight color using the lightness() extension
-available in the Color plugin.  Click the main color swatch to change the color and see the results.
-</div>
-
-<div id="colorpicker"></div>
-
 <div class="wrapper">
-  <div class="labelbox">Main</div>
-  <div class="labelbox">Highlight</div>
+	<div id="jrange" class="dates">
+	 <input />
+	 <div></div>
+	</div>
 </div>
 
-<div id="colorselect" class="wrapper">
-  <div class="colorbox"></div>
-  <div class="colorbox"></div>
-</div>
 
-<div class="wrapper">
-  <div id="myDiv" class="outputbox">
-    This is a box with the select
-    color as the background and the
-    calculated highlight as the border.
-  </div>
-</div>
 
 <script>
 
-jQuery.Color.fn.contrastColor = function() {
-    var r = this._rgba[0], g = this._rgba[1], b = this._rgba[2];
-    return (((r*299)+(g*587)+(b*144))/1000) >= 131.5 ? "black" : "white";
-};
+$.datepicker._defaults.onAfterUpdate = null;
 
-$(function()
-{
-   var $colorSelect = $('#colorselect'),
-       $colorMain = $colorSelect.children().eq(0),
-       $colorHighlight = $colorSelect.children().eq(1),
-       $myDiv = $('#myDiv');
+var datepicker__updateDatepicker = $.datepicker._updateDatepicker;
+$.datepicker._updateDatepicker = function( inst ) {
+	datepicker__updateDatepicker.call( this, inst );
 
-   function update(e, ui)
-   {
-      var cl, nc, nn;
-
-      if (!ui) return;
-
-      cl = jQuery.Color(ui.formatted);
-      nn = cl.lightness();
-      nc = cl.lightness( (nn > 0.5 ? nn : (1-nn)) / 2);
+	var onAfterUpdate = this._get(inst, 'onAfterUpdate');
+	if (onAfterUpdate)
+		onAfterUpdate.apply((inst.input ? inst.input[0] : null),
+			[(inst.input ? inst.input.val() : ''), inst]);
+}
 
 
-      $colorMain.css('background-color', cl);
-      $colorHighlight.css('background-color', nc);
+$(function() {
 
-      $myDiv.css({
-          backgroundColor: cl,
-          borderColor: nc,
-          color: cl.contrastColor()
-        });
-   }
+	var cur = -1, prv = -1;
+   $('#jrange div')
+   	.datepicker({
+   			changeMonth: true,
+   			changeYear: true,
+   			showButtonPanel: true,
 
-   $(document).click(function (e)
-      {
-         $('#colorpicker')
-              .hide();
+   			beforeShowDay: function ( date ) {
+   					return [true, ( (date.getDate() >= Math.min(prv, cur) && date.getDate() <= Math.max(prv, cur)) ? 'date-range-selected' : '')];
+   				},
 
-         update();
-      });
+   			onSelect: function ( dateText, inst ) {
+   					var d1, d2;
 
-   $colorMain.click(function (e)
-     {
-        var $el = $(this),
-            $align = $('#colorselect');
+   					prv = +cur;
+   					cur = inst.selectedDay;
+   					if ( prv == -1 || prv == cur ) {
+   						prv = cur;
+   						$('#jrange input').val( dateText );
+   					} else {
+   						d1 = $.datepicker.formatDate( 'mm/dd/yy', new Date( inst.selectedYear, inst.selectedMonth, Math.min(prv,cur) ), {} );
+   						d2 = $.datepicker.formatDate( 'mm/dd/yy', new Date( inst.selectedYear, inst.selectedMonth, Math.max(prv,cur) ), {} );
+   						$('#jrange input').val( d1+' - '+d2 );
+   					}
+   				},
 
-        $('#colorpicker')
-           .show()
-           .colorpicker('setColor', $colorMain.css('background-color'))
-           .position({
-                 my: 'left+10, top',
-                 at: 'right, top',
-                 of: $colorSelect
-              });
+   			onChangeMonthYear: function ( year, month, inst ) {
+   					prv = cur = -1;
+   				},
 
-        e.stopPropagation();
+   			onAfterUpdate: function ( inst ) {
+   					$('<button type="button" class="ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all" data-handler="hide" data-event="click">Done</button>')
+   						.appendTo($('#jrange div .ui-datepicker-buttonpane'))
+   						.on('click', function () { $('#jrange div').hide(); });
+   				}
+   		})
+   	.position({
+   			my: 'left top',
+   			at: 'left bottom',
+   			of: $('#jrange input')
+   		})
+   	.hide();
 
-     });
+   $('#jrange input').on('focus', function (e) {
+   		$('#jrange div').show();
+   	});
 
-   $('#colorpicker')
-        .hide()
-        .colorpicker({
-             colorFormat: 'RGB',
-             select: update
-           })
-        .click(function (e) { e.stopPropagation(); } );
-
-   update(null, {formatted: 'rgba(255,0,0,1)'});
 });
 
 </script>
+
   </div>
 </div>
 
