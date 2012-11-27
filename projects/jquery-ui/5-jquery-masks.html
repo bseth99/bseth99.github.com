@@ -1,0 +1,562 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>jQuery Input Masks - Guiding and Validating User Entry</title>
+    
+    <meta name="author" content="Ben Olson">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="/assets/themes/twitter/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/themes/twitter/css/style.css?body=1" rel="stylesheet" type="text/css" media="all">
+    <link href="/assets/style.css" rel="stylesheet">
+
+    <!-- Le fav and touch icons -->
+  <!-- Update these with your own images
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  -->
+
+   <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css">
+
+   <script src="http://code.jquery.com/jquery.js"></script>
+   <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+   <script src="/assets/themes/twitter/js/jquery.ui.touch-punch.js"></script>
+
+  </head>
+
+  <body>
+
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="/">Ben's Sandbox</a>
+          <ul class="nav">
+            
+            
+            
+
+
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/projects/index.html">Projects</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+
+
+
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="content">
+        
+<div class="page-header">
+  <h3>jQuery Input Masks - Guiding and Validating User Entry </h3>
+
+
+<hr style="margin: 0px"/>
+
+
+
+<!-- Place this tag where you want the +1 button to render. -->
+<div style="position: relative; top: -20px; text-align: right; height: 30px">
+  <span><a href="http://benknowscode.wordpress.com">View Blog</a></span>&nbsp;&nbsp;
+  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/jquery-ui/5-jquery-masks.html">View Source</a></span>&nbsp;&nbsp;
+  <div class="g-plusone" data-size="small"></div>
+</div>
+
+<!-- Place this tag after the last +1 button tag. -->
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = false;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+
+
+
+<div class="row">
+  <div class="span12">
+    
+
+<script src="jquery.inputmask/jquery.inputmask.js"></script>
+<script src="jquery.inputmask/jquery.inputmask.extensions.js"></script>
+<script src="jquery.inputmask/jquery.inputmask.custom.extensions.js"></script>
+<script src="jquery.inputmask/jquery.inputmask.date.extensions.js"></script>
+<script src="jquery.inputmask/jquery.inputmask.numeric.extensions.js"></script>
+
+
+<style>
+.wrapper div { margin: 5px; }
+.ui-spinner input { font-size: 8pt; }
+</style>
+
+<div class="discussion">
+These are some of the interesting masks available in the <a href="https://github.com/RobinHerbots/jquery.inputmask">RobinHerbots/jquery.inputmask</a>
+plugin.  The date and time masks validate each part to ensure the entry is in range.  The decimal input formats while typing.  These features are
+above and beyond those available in both the unreleased jQuery UI and the one from digitalbush.  Those two implementations focus only on providing
+the basic mask without validation beyond numeric and/or alpha ranges.
+</div>
+<br/>
+
+<div class="wrapper">
+   <div>Date: <input id="date" /></div>
+   <div>Time: <input id="time" /></div>
+   <div>Decimal: <input id="decimal" /></div>
+</div>
+<br/>
+
+
+<script>
+
+$(function() {
+
+   $("#date").inputmask( 'mm/dd/yyyy' );
+
+   $("#time").inputmask( 'h:s t' );
+
+   $("#decimal").inputmask( 'decimal', { radixPoint: '.', autoGroup: true, groupSeparator: ',', groupSize: 3 } );
+
+});
+
+</script>
+
+
+<div class="discussion">
+Here's an attempt to extend the RobinHerbots/jquery.inputmask to add a dollar symbol to the decimal mask.  It unfortunately only allows one number
+to be entered.  It appears most of the logic in the decimal implementation needs to be duplicated and modified to account for the dollar sign.
+I also tried to use a spinner with decimal formatting with the decimal input mask to force valid entries in the spinner input field.  For some reason,
+they do not get along after getting into the 1000's range when the group separator starts getting added.
+</div>
+<br/>
+
+<div class="wrapper">
+   <div>Dollar: <input id="dollar" /></div>
+   <div>Spinner: <input id="numspin" /></div>
+</div>
+<br/>
+
+<script>
+
+(function ($) {
+    //number aliases
+    $.extend($.inputmask.defaults.aliases, {
+        'dollar': {
+            mask: "$~",
+            repeat: 0,
+            numericInput: false,
+            autoGroup: false,
+            regex: {
+                number: function (groupSeparator, groupSize, radixPoint, digits) {
+                    return new RegExp("^\\$[\+\\d\-]{1}[\\d" + groupSeparator + "]*[" + radixPoint + "]?\\d" + digits + "$");
+                }
+            },
+            alias: 'decimal'
+         }
+      });
+})(jQuery);
+
+$(function() {
+
+   $("#dollar").inputmask('dollar');
+
+   $("#numspin")
+      .inputmask('decimal', { radixPoint: '.', autoGroup: true, groupSeparator: ',', groupSize: 3 } )
+      .spinner({ min:0, max:1999, numberFormat: 'n' });
+
+});
+
+</script>
+
+
+<div class="discussion">
+This last set of demos only uses the <a href="http://digitalbush.com/projects/masked-input-plugin/">digitalbush</a> mask to create the formatted input.
+I did modify it to add a callback to validate each "field" in the mask so I could do the date/time validation.  The decimal, dollar, and spinner all
+use keydown/keyup events with Globalize to format entry as you type.  Its not a perfect implementation but a reasonable proof-of-concept that illustrates
+the approach.
+</div>
+<br/>
+
+<script src="jquery.maskedinput-ben.js"></script>
+<script src="globalize.js"></script>
+
+<div class="wrapper">
+   <div>Date: <input id="date2" /></div>
+   <div>Time: <input id="time2" /></div>
+   <div>Decimal: <input id="decimal2" /></div>
+   <div>Dollar: <input id="dollar2" /></div>
+   <div>Spinner: <input id="numspin2" /></div>
+</div>
+<br/>
+
+<script>
+$(function() {
+
+   $("#date2")
+      .mask(
+         '99/99/9999',
+         { validate: function (fld,cur) {
+               // 0 == month; 1 == day; 2 == year
+               var mm = parseInt(fld[0]),
+                   dd = parseInt(fld[1]),
+                   yy = parseInt(fld[2]),
+                   vl = true;
+
+               if (!(mm >= 0 && mm < 13) && cur == 0) {
+                  fld[0] = '12';
+                  vl = false;
+               }
+
+               if (!(dd >= 0 && dd < 31) && cur == 1) {
+                  fld[1] = '01';
+                  vl = false;
+               }
+
+               if (!(yy >= 1976 && yy < 2199) && cur == 2 && fld[2].replace('_','').length == 4) {
+                  fld[2] = '2012';
+                  vl = false;
+               }
+
+               return vl;
+            }
+         });
+
+   $("#time2").mask(
+         '99:99 aa' ,
+         { validate: function (fld,cur) {
+               // 0 == hour; 1 == minute; 2 == AM/PM
+               var hh = parseInt(fld[0]),
+                   mm = parseInt(fld[1]),
+                   ap = fld[2].replace('_','').toUpperCase(),
+                   vl = true;
+
+               if (!(hh >= 0 && hh < 13) && cur == 0) {
+                  fld[0] = '12';
+                  vl = false;
+               }
+
+               if (!(mm >= 0 && mm < 60) && cur == 1) {
+                  fld[1] = '00';
+                  vl = false;
+               }
+
+               if (cur == 2) {
+                  if (ap.length == 2) {
+                     if (!(ap == 'AM' || ap == 'PM')) {
+                        fld[2] = 'AM';
+                        vl = false;
+                     } else {
+                       fld[2] = ap;
+                     }
+                  } else if (ap == 'P') {
+                     fld[2] = 'PM';
+                  } else if (ap == 'A') {
+                     fld[2] = 'AM';
+                  }
+               }
+
+               return vl;
+            }
+         });
+
+   var old = '';
+   $("#decimal2, #numspin2")
+      .on('focus', function (e) {
+            old = '';
+         })
+      .on('keydown', function (e) {
+            old = $(this).val();
+         })
+      .on('keyup', function (e) {
+            var n = Globalize.parseFloat($(this).val()),
+                pos;
+
+            if (isNaN(n)) {
+               pos = old.indexOf('.');
+               $(this).val( old )
+                      .caret( pos, pos);
+            } else {
+               n = Globalize.format( n, 'n' );
+               pos = n.indexOf('.');
+               $(this).val( n )
+                      .caret( pos, pos);
+            }
+         });
+
+   $("#dollar2")
+      .on('focus', function (e) {
+            old = '';
+         })
+      .on('keydown', function (e) {
+            old = $(this).val();
+         })
+      .on('keyup', function (e) {
+            var n = Globalize.parseFloat($(this).val()),
+                pos;
+
+            if (isNaN(n)) {
+               pos = old.indexOf('.');
+               $(this).val( old )
+                      .caret( pos, pos);
+            } else {
+               n = Globalize.format( n, 'C' );
+               pos = n.indexOf('.');
+               $(this).val( n )
+                      .caret( pos, pos);
+            }
+         });
+
+
+   $("#numspin2")
+      .spinner({ min:0, max:1999, numberFormat: 'n' });
+
+});
+
+</script>
+
+  </div>
+</div>
+
+</div>
+
+
+      </div>
+
+      <footer>
+        <p>&copy; Ben Olson 2012
+          with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
+          and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
+        </p>
+      </footer>
+
+    </div> <!-- /container -->
+
+    
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-34780028-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+  </body>
+</html>
+
