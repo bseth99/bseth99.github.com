@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>jQuery UI Spinner - Possible Alignment Option</title>
+    <title>Animating a Ribbon Effect</title>
     
     <meta name="author" content="Ben Olson">
 
@@ -275,7 +275,7 @@
       <div class="content">
         
 <div class="page-header">
-  <h3>jQuery UI Spinner - Possible Alignment Option </h3>
+  <h3>Animating a Ribbon Effect </h3>
 
 
 <hr style="margin: 0px"/>
@@ -284,8 +284,8 @@
 
 <!-- Place this tag where you want the +1 button to render. -->
 <div style="position: relative; top: -20px; text-align: right; height: 30px">
-  <span><a href="http://benknowscode.wordpress.com/2012/10/18/exploring-the-new-jquery-ui-spinner-beyond-the-basics/">View Blog</a></span>&nbsp;&nbsp;
-  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/jquery-ui/2-jquery-ui-spinner-orientation.html">View Source</a></span>&nbsp;&nbsp;
+  <span><a href="http://benknowscode.wordpress.com">View Blog</a></span>&nbsp;&nbsp;
+  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/css/2-ribbon-wrap-slide.html">View Source</a></span>&nbsp;&nbsp;
   <div class="g-plusone" data-size="small"></div>
 </div>
 
@@ -304,68 +304,140 @@
   <div class="span12">
     
 
-<link rel="stylesheet" href="spinner-layout/jquery.ui.spinner.css">
-<script src="spinner-layout/jquery.ui.spinner.js"></script>
 
 <style>
-   h5 { margin-top: 5px; }
 
-	.controls > span { display: inline-block; margin: 10px; }
-	.size1 input { font-size: 8pt; }
-	.size2 input { font-size: 10pt; }
-	.size3 input { font-size: 14pt; }
-	.right input { width: 3em; }
-	.left input { width: 3em; }
-	.vertical input { width: 1.5em; }
-	.horizontal input { width: 2em; }
+.wrapper {
+   display: inline-block;
+   position: relative;
+   width: 100px;
+   height: 360px;
+   margin: 30px;
+   padding: 30px;
+   background-color: #ddd;
+   border-radius: 5px;
+}
+
+.banner {
+   position: absolute;
+   top: 30px;
+   margin-left: -40px;
+}
+
+.banner .main {
+   cursor: pointer;
+   position: relative;
+   padding: 10px;
+   padding-left: 20px;
+   padding-right: 20px;
+   min-width: 75px;
+   font-weight: bold;
+   color: white;
+   background-color: gray;
+   border-radius: 0px 5px 5px 0px;
+}
+
+.banner .wrap {
+   position: absolute;
+   top: 0px;
+   left: 0;
+   width: 0;
+   height: 100%;
+   border-width: 0px 10px 5px 0px;
+   border-style: solid;
+   border-color: transparent #aaa transparent transparent;
+}
+
+#move { font-size: 8pt; margin-top: -20px; }
+
 </style>
 
 <div class="discussion">
-This demo illustrates the alignment option I added to Spinner to provide four
-layout configurations for the spin controls.  The left alignment is shown on the
-<a href="http://wiki.jqueryui.com/w/page/12138077/Spinner">planning wiki</a> and
-enables adding other controls to the right side of the widget like a drop menu.  The vertical and
-horizontal options add additional flexibility based on how you might want to
-use the widget.  I created three of each in different font sizes to ensure
-the widget scales properly with the input field.  I have this changed in
-<a href="https://github.com/bseth99/jquery-ui/tree/spinner-layout">
-my fork of the project under the spinner-layout branch</a> if you're interested in using it.
+A demo of using a ribbon effect and transitioning it based on perspective.  There is both a slider version to see
+the different in-between points and an actual animated version which will perform the transistion when you click on
+the element.
 </div>
+<br/>
 
-<h5>Right</h5>
-<div class="right controls">
-	<span class="size1"><input /></span>
-	<span class="size2"><input /></span>
-	<span class="size3"><input /></span>
-</div>
+<div class="wrapper">
+   <div id="move"></div>
 
-<h5>Left</h5>
-<div class="left controls">
-	<span class="size1"><input /></span>
-	<span class="size2"><input /></span>
-	<span class="size3"><input /></span>
-</div>
-
-<h5>Vertical</h5>
-<div class="vertical controls">
-	<span class="size1"><input /></span>
-	<span class="size2"><input /></span>
-	<span class="size3"><input /></span>
-</div>
-
-<h5>Horizontal</h5>
-<div class="horizontal controls">
-	<span class="size1"><input /></span>
-	<span class="size2"><input /></span>
-	<span class="size3"><input /></span>
+   <div id="mv1" class="banner">
+    <div class="wrap"></div>
+    <div class="main">Apples</div>
+   </div>
 </div>
 
 <script>
 $(function() {
-	$('.right input').spinner({alignment: 'right'});
-	$('.left input').spinner({alignment: 'left'});
-	$('.vertical input').spinner({alignment: 'vertical'});
-	$('.horizontal input').spinner({alignment: 'horizontal'});
+
+   $('#move')
+      .slider({
+         min: 30,
+         max: 330,
+         slide: function ( e, ui ) {
+               var p = Math.round(10 / 300 * (ui.value - 30)) - 5;
+
+               $('#mv1')
+                  .css('top', ui.value)
+                  .find('.wrap')
+                     .css({
+                           top: (p >= 0 ? -p : 0),
+                           borderTopWidth: (p >= 0 ? p : 0),
+                           borderBottomWidth: (p <= 0 ? -p : 0)
+                        })
+                     .end()
+                   .find('.main')
+                     .css({
+                           boxShadow: '3px '+(-p/2)+'px 3px 0 #aaa'
+                        });
+            }
+         });
+
+   $('#mv1 .main').css('box-shadow', '3px 3px 3px 0 #aaa');
+
+});
+</script>
+
+<div class="wrapper">
+   <div id="mv2" class="banner">
+    <div class="wrap"></div>
+    <div class="main">Bananas</div>
+   </div>
+</div>
+
+<script>
+$(function() {
+
+   var dir = 1;
+   $('#mv2')
+      .click(function ( e ) {
+
+            var $w = $('#mv2 .wrap'),
+                $m = $('#mv2 .main');
+
+            $(this)
+               .animate({top: (dir == 1 ? 330 : 30)}, {
+                     step: function (now, fx) {
+
+                           var p = Math.round(10 / 300 * (now - 30)) - 5;
+
+                           $w.css({
+                                 top: (p >= 0 ? -p : 0),
+                                 borderTopWidth: (p >= 0 ? p : 0),
+                                 borderBottomWidth: (p <= 0 ? -p : 0)
+                              });
+
+                           $m.css('box-shadow', '3px '+(-p/2)+'px 3px 0 #aaa');
+                        }
+                   });
+
+            dir *= -1;
+
+         });
+
+   $('#mv2 .main').css('box-shadow', '3px 3px 3px 0 #aaa');
+
 });
 </script>
 
