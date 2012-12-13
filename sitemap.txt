@@ -27,6 +27,7 @@ http://bseth99.github.com/projects/colorbox/index.html
 http://bseth99.github.com/projects/colorbox/sortable-draggable.html
 http://bseth99.github.com/projects/css/1-css3-ribbon-effect.html
 http://bseth99.github.com/projects/css/2-ribbon-wrap-slide.html
+http://bseth99.github.com/projects/css/3-css3-only-spinner.html
 http://bseth99.github.com/projects/css/index.html
 http://bseth99.github.com/projects/index.html
 http://bseth99.github.com/projects/jquery-ui/1-jquery-ui-spinner.html
