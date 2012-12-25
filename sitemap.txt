@@ -11,6 +11,8 @@ http://bseth99.github.com/projects/animate/7-jquery-sequencing-animations.html
 http://bseth99.github.com/projects/animate/8-jquery-svg-animate.html
 http://bseth99.github.com/projects/animate/9-tweenlite-raphael-svg-timeline.html
 http://bseth99.github.com/projects/animate/A-tweenlite-exploding-effect.html
+http://bseth99.github.com/projects/animate/B_CSS3_3D_fireworks_setup.html
+http://bseth99.github.com/projects/animate/C_HTML_parallax_fireworks_setup.html
 http://bseth99.github.com/projects/animate/index.html
 http://bseth99.github.com/projects/canvas/1-html5-canvas-cracking-glass-effect.html
 http://bseth99.github.com/projects/canvas/2-html5-canvas-gradients.html
