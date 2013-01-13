@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Bresenham's Algorithm Javascript Implementation Test</title>
+    <title>Basic Tables using Backbone Views</title>
     
     <meta name="author" content="Ben Olson">
 
@@ -311,7 +311,7 @@
       <div class="content">
         
 <div class="page-header">
-  <h3>Bresenham's Algorithm Javascript Implementation Test </h3>
+  <h3>Basic Tables using Backbone Views </h3>
 
 
 <hr style="margin: 0px"/>
@@ -320,8 +320,8 @@
 
 <!-- Place this tag where you want the +1 button to render. -->
 <div style="position: relative; top: -20px; text-align: right; height: 30px">
-  <span><a href="http://benknowscode.wordpress.com/2012/09/12/using-bresenhams-algorithm-to-create-shapes-in-javascript/">View Blog</a></span>&nbsp;&nbsp;
-  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/animate/1-bresenham.html">View Source</a></span>&nbsp;&nbsp;
+  <span><a href="http://benknowscode.wordpress.com">View Blog</a></span>&nbsp;&nbsp;
+  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/backbone/02-tables-basic-itemview.html">View Source</a></span>&nbsp;&nbsp;
   <div class="g-plusone" data-size="small"></div>
 </div>
 
@@ -365,136 +365,157 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 -->
 
-<script src="bresenham.js"></script>
+
+<link rel="stylesheet" type="text/css" href="table.css">
 
 <style>
-canvas {
-   border: 1px dotted black;
-}
 
-span {
-   display: inline-block;
-   width: 200px;
-   margin: 1px;
-}
-
-.shape-label {
-   text-align: center;
-   font-weight: bold;
-}
+#movies [column="rank"] { width: 50px; }
+#movies [column="title"] { width: 35%; }
+#movies [column="studio"] { width: 80px; }
+#movies [column="gross"] { width: 100px; }
+#movies [column="year"] { width: 80px; }
 
 </style>
 
-<div>
-  Several different shapes calcuated using Bresenham's Algorithm.
-</div>
-<br/>
+<script id="movie-table" type="text/template">
 
-<div id="step1-label">
-<span class="shape-label">Line</span>
-<span class="shape-label">Circle</span>
-<span class="shape-label">Ellipse</span>
-<span class="shape-label">Bezier</span>
-</div>
+ <thead>
+  <tr>
+   <th column="rank"><div>Rank</div></th>
+   <th column="title"><div>Title</div></th>
+   <th column="studio"><div>Studio</div></th>
+   <th column="gross"><div>Gross</div></th>
+   <th column="year"><div>Year</div></th>
+  </tr>
+ </thead>
+ <tbody>
 
-<div id="step1" step="1">
-<canvas class="line"></canvas>
-<canvas class="circle"></canvas>
-<canvas class="elipse"></canvas>
-<canvas class="bazier"></canvas>
-</div>
+ </tbody>
 
-<div id="step1-text">
-<span class="line-text"></span>
-<span class="circle-text"></span>
-<span class="elipse-text"></span>
-<span class="bazier-text"></span>
-</div>
+</script>
 
-<br/><br/>
+<script id="movie-row" type="text/template">
+   <td><div><%= rank %></div></td>
+   <td><div><%= title %></div></td>
+   <td><div><%= studio %></div></td>
+   <td><div><%= Globalize.format(gross, 'C') %></div></td>
+   <td><div><%= year %></div></td>
+</script>
 
-<div>
-  This time try to limit the number of points returned.
-</div>
-<br/>
-
-<div id="step5-label">
-<span class="shape-label">Line</span>
-<span class="shape-label">Circle</span>
-<span class="shape-label">Ellipse</span>
-<span class="shape-label">Bezier</span>
-</div>
-
-<div id="step5" step="5">
-<canvas class="line"></canvas>
-<canvas class="circle"></canvas>
-<canvas class="elipse"></canvas>
-<canvas class="bazier"></canvas>
-</div>
-
-<div id="step5-text">
-<span class="line-text"></span>
-<span class="circle-text"></span>
-<span class="elipse-text"></span>
-<span class="bazier-text"></span>
-</div>
-
+<script src="moviedata.js"></script>
+<script src="globalize.js"></script>
+<script src="underscore.min.js"></script>
+<script src="backbone.min.js"></script>
 
 <script>
 
-   $('canvas').each(function()
-     {
-        var $pn = $(this).parent(),
-            cn = this.className,
-            step = +$pn.attr('step'),
-            pts, p, ctx;
+var Movie = Backbone.Model.extend({
 
-        this.height = 200;
-        this.width = 200;
+   defaults: {
+      title: '',
+      gross: 0,
+      rank: -1,
+      year: 1900,
+      studio: ''
+   }
 
-        switch (cn)
-        {
+});
 
-           case 'line' :
-              pts = plotLine(25, 45, 155, 180, step);
-              break;
+var Movies = Backbone.Collection.extend({
 
-           case 'circle' :
-              pts = plotCircle(100, 100, 90, step);
-              break;
+   model: Movie,
 
-           case 'elipse' :
-              pts = plotEllipseRect(50, 80, 150, 120, step);
-              break;
+   comparator: function(movie) {
+      return movie.get('rank');
+   }
 
-           case 'bazier' :
-              pts = plotBasicBezier(25, 45, 100, 60, 155, 180, step);
-              break;
+});
 
-        }
+var MovieTable = Backbone.View.extend({
 
-        ctx = this.getContext('2d');
+   _movieRowViews: [],
 
-        ctx.fillStyle = 'white';
-        ctx.fill();
+   tagName: 'table',
+   template: null,
 
-        ctx.strokeStyle = 'black';
-        ctx.beginPath();
-        ctx.lineWidth = 1;
+   initialize: function() {
 
-        var sel = '#'+$pn[0].id+'-text > .'+cn+'-text';
-        $(sel).html('Points: ' + pts.length);
+      this.template = _.template( $('#movie-table').html() );
+   },
 
-        for (p=0;p<pts.length;p++)
-        {
-           ctx.moveTo(pts[p].x, pts[p].y);
-           ctx.arc(pts[p].x, pts[p].y, 1, 0, 2 * Math.PI, true);
-           ctx.fill();
-        }
+   render: function() {
 
-        ctx.stroke();
+      this.$el.html(this.template());
 
-     });
+      this.updateTable();
+
+      return this;
+   },
+
+   updateTable: function () {
+
+      var ref = this.collection,
+          $table;
+
+      _.invoke(this._movieRowViews, 'remove');
+
+      $table = this.$('tbody');
+
+      this._movieRowViews = this.collection.map(
+            function ( obj ) {
+                  var v = new MovieRow({  model: ref.get(obj) });
+
+                  $table.append(v.render().$el);
+
+                  return v;
+              });
+   }
+
+});
+
+var MovieRow = Backbone.View.extend({
+
+   tagName: 'tr',
+   template: null,
+
+   initialize: function() {
+
+      this.template = _.template( $('#movie-row').html() );
+
+   },
+
+   render: function() {
+
+      this.$el.html( this.template( this.model.toJSON()) );
+
+      return this;
+   }
+
+});
+
+</script>
+
+<div class="discussion">
+  Instead of using one view that renders the entire table using partials, this version is broken into
+  two views - one to render the main table and headers and the other to render one row from the collection.
+  This approach provides flexibility as additional functionality is added to the main table and each row.
+</div>
+<br/>
+
+<div class="wrapper"></div>
+
+<script>
+
+$(function() {
+
+   var movieList = new Movies(movieData);
+
+   var movieView = new MovieTable({ collection: movieList });
+
+   $('.wrapper').html( movieView.render().$el.attr('id', 'movies') );
+
+});
 
 </script>
 

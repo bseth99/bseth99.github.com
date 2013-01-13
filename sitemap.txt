@@ -14,6 +14,12 @@ http://bseth99.github.com/projects/animate/A-tweenlite-exploding-effect.html
 http://bseth99.github.com/projects/animate/B_CSS3_3D_fireworks_setup.html
 http://bseth99.github.com/projects/animate/C_HTML_parallax_fireworks_setup.html
 http://bseth99.github.com/projects/animate/index.html
+http://bseth99.github.com/projects/backbone/01-tables-basic-partial.html
+http://bseth99.github.com/projects/backbone/02-tables-basic-itemview.html
+http://bseth99.github.com/projects/backbone/03-tables-sorting.html
+http://bseth99.github.com/projects/backbone/04-compare-animate-graph.html
+http://bseth99.github.com/projects/backbone/05-select-totals-control.html
+http://bseth99.github.com/projects/backbone/index.html
 http://bseth99.github.com/projects/canvas/1-html5-canvas-cracking-glass-effect.html
 http://bseth99.github.com/projects/canvas/2-html5-canvas-gradients.html
 http://bseth99.github.com/projects/canvas/3-html5-canvas-layers-blending.html
