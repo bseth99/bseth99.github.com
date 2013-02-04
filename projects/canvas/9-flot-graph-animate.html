@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>jQuery UI Demo - Overlapping Functionality</title>
+    <title>Animating a Flot Graph with jQuery</title>
     
     <meta name="author" content="Ben Olson">
 
@@ -323,7 +323,7 @@
       <div class="content">
         
 <div class="page-header">
-  <h3>jQuery UI Demo - Overlapping Functionality </h3>
+  <h3>Animating a Flot Graph with jQuery </h3>
 
 
 <hr style="margin: 0px"/>
@@ -332,8 +332,8 @@
 
 <!-- Place this tag where you want the +1 button to render. -->
 <div style="position: relative; top: -20px; text-align: right; height: 30px">
-  <span><a href="http://benknowscode.wordpress.com/2012/09/07/tinkering-with-jquery-ui-part-3-overriding-default-behaviors-with-proxy-functions/">View Blog</a></span>&nbsp;&nbsp;
-  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/colorbox/sortable-draggable.html">View Source</a></span>&nbsp;&nbsp;
+  <span><a href="http://benknowscode.wordpress.com">View Blog</a></span>&nbsp;&nbsp;
+  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/canvas/9-flot-graph-animate.html">View Source</a></span>&nbsp;&nbsp;
   <div class="g-plusone" data-size="small"></div>
 </div>
 
@@ -378,57 +378,65 @@ OTHER DEALINGS IN THE SOFTWARE.
 -->
 
 
+<script src="flot/jquery.flot.js"></script>
+<script src="flot/jquery.flot.stack.js"></script>
+
 <style>
-   #sortable { list-style-type: none; margin: 0; padding: 0; width: 60%; }
-   #sortable li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; font-size: 1.4em; height: 18px; }
-   #sortable li span { position: absolute; margin-left: -1.3em; }
+
+
+.wrapper { width: 800px; margin: auto; font-size: 12pt; }
+
+.graph {
+   margin-top: 20px;
+   width: 700px;
+   height: 400px;
+}
+
+.ui-button-text { font-size: 0.7em; }
+
 </style>
 
+<div class="wrapper">
+   <button>Animate!</button>
+   <div class="graph"></div>
+</div>
 
- <div class="discussion">
-   This quick example shows that multiple widgets can interfere with one another
-   if care is not taken to avoid attaching multiple widgets to an element.
-   The Sortable widget provides interaction behaviors on the children of a target
-   element.  If Draggable is attached to those children after Sortable is instantiated,
-   all the functionality of Sortable is lost.  This is probably not an intentional thing to
-   do when constructing a site. However, an incorrect selector can easily grab too many
-   elements and add Draggable which might cause some debugging headaches try to figure out
-   why Sortable is not working as expected.
- </div>
+<script>
 
+$(function() {
 
- <br/><br/>
- <div class="actions">
-    <input id="dragadd" type="button" value="Add Draggable"/>
-    <input id="dragdel" type="button" value="Remove Draggable"/>
- </div>
+    var init = { data: [[1, 5], [2, 25], [3, 4], [4, 16], [5, 12]] },
+        options = {
+             bars: { show: true },
+             yaxis: { min: 0 },
+             xaxis: { tickDecimals: 0 }
+          },
+        plot;
 
- <div class="target">
+    plot = $.plot($('.graph'), [init], options);
 
-   <ul id="sortable">
-    <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 1</li>
-    <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 2</li>
-    <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 3</li>
-    <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 4</li>
-    <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 5</li>
-    <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 6</li>
-    <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 7</li>
-   </ul>
- </div>
+    var animate = function () {
+       $('.graph').animate( {tabIndex: 0}, {
+               duration: 1000,
+               step: function ( now, fx ) {
 
- <script>
+                     var r = $.map( init.data, function ( o ) {
+                           return [[ o[0], o[1] * fx.pos ]];
+                        });
 
- $(function()
- {
-       $( "#sortable" ).sortable();
-       $( "#sortable" ).disableSelection();
+                     plot.setData( [{ data: r }] );
+                     plot.draw();
 
-       $('#dragadd').click(function() {$( "#sortable" ).children().draggable();});
-       $('#dragdel').click(function() {$( "#sortable" ).children().draggable('destroy');});
- });
+                  }
+         });
+    }
 
+    $('button').button().click(animate);
+
+    animate();
+
+});
 </script>
-
 
   </div>
 </div>
