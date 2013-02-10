@@ -29,6 +29,7 @@ http://bseth99.github.com/projects/canvas/6-html5-canvas-bezier-curves.html
 http://bseth99.github.com/projects/canvas/7-html5-canvas-cracking-glass-effect2.html
 http://bseth99.github.com/projects/canvas/8-flot-graphs-color-options.html
 http://bseth99.github.com/projects/canvas/9-flot-graph-animate.html
+http://bseth99.github.com/projects/canvas/A-flot-interact-labels.html
 http://bseth99.github.com/projects/canvas/index.html
 http://bseth99.github.com/projects/colorbox/demo-part-1.html
 http://bseth99.github.com/projects/colorbox/demo-part-2.html

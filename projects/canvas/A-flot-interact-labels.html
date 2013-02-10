@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Graphing with Flot - Controlling Series Color</title>
+    <title>Adding Interaction to Flot Graphs - Tooltips and Labeled Series</title>
     
     <meta name="author" content="Ben Olson">
 
@@ -327,7 +327,7 @@
       <div class="content">
         
 <div class="page-header">
-  <h3>Graphing with Flot - Controlling Series Color </h3>
+  <h3>Adding Interaction to Flot Graphs - Tooltips and Labeled Series </h3>
 
 
 <hr style="margin: 0px"/>
@@ -336,8 +336,8 @@
 
 <!-- Place this tag where you want the +1 button to render. -->
 <div style="position: relative; top: -20px; text-align: right; height: 30px">
-  <span><a href="http://benknowscode.wordpress.com/2013/02/03/graphing-with-flot-controlling-series-color/">View Blog</a></span>&nbsp;&nbsp;
-  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/canvas/8-flot-graphs-color-options.html">View Source</a></span>&nbsp;&nbsp;
+  <span><a href="http://benknowscode.wordpress.com">View Blog</a></span>&nbsp;&nbsp;
+  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/canvas/A-flot-interact-labels.html">View Source</a></span>&nbsp;&nbsp;
   <div class="g-plusone" data-size="small"></div>
 </div>
 
@@ -387,50 +387,69 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 <style>
 
-.wrapper { width: 800px; margin: auto; font-size: 12pt; }
+.wrapper {
+   margin: auto;
+   width: 800px;
+   margin-top: 50px;
+   font-size: 12pt;
+}
 
 .graph {
-   margin-top: 10px;
+   margin-top: 20px;
    width: 700px;
    height: 400px;
 }
 
-.legend { margin-top: 30px; }
-.legend > table { margin: auto; }
-
-.ui-button-text { font-size: 0.7em; }
-
+.ui-button-text { font-size: 0.8em; }
 .controls > div { display: inline-block; }
 .controls .mlabel { margin: 5px; color: #888; font-weight: bold; font-size: 0.9em; }
+
+.tooltip {
+   font-size: 1em;
+   opacity: 1;
+   padding: 0;
+   position: absolute;
+   z-index: 12;
+   color: #888;
+   background: #fff;
+   border: 1px solid #aaa;
+   -moz-box-shadow: 0px 1px 1px #ddd;
+   -webkit-box-shadow: 0px 1px 1px #ddd;
+   box-shadow: 0px 1px 2px #ddd;
+}
+
+.tooltip div {
+   position: relative;
+   text-align: center;
+   margin: 3px;
+   max-width:100px;
+}
+
+.tooltip span { font-size: 0.7em; display: block; }
+.tooltip span.series { color: #333; }
+
+.tooltip:after {
+   content: ' ';
+   position: absolute;
+   width: 0;
+   height: 0;
+   margin-left: -5px;
+   bottom: -10px;
+   left: 50%;
+   border-width: 5px;
+   border-style: solid;
+   border-color: #aaa transparent transparent transparent ;
+}
 
 </style>
 
 <div class="discussion">
-Using the data from the <a href="http://www.flotcharts.org/flot/examples/series-toggle/index.html">Series Toggle Example</a> on
-the Flot site, I used the stack plugin and added additional options to try creating custom color schemes for each series.  While
-the default selections are general fine, I found that at times I wanted to have more control.  You can either set the color on the series object directly or
-use the <code>colors</code> array to create a custom palette of colors to chose from (regardless of the number of series).  I used
-jQuery.Color to construct the Mono and Multi options below such that I could work in the HSL color space to manipulate hue and lightness
-before converting to RGB.  Additionally, I set a <code>yaxis.max</code> so the graph would maintain a consistent scale when adding/removing series.
-This example also makes use of the jQuery UI Buttonset widget to make for a consistent and enhanced layout.
+Example showing how to respond to interaction events fired by Flot.  Hovering will label a single point.  Clicking will
+label all the points in the series.  Works with both line and bar charts including the stack plugin.
 </div>
-<br/>
 
 <div class="wrapper">
    <div class="controls">
-
-      <div>
-         <div class="mlabel">
-            Color:
-         </div>
-         <div>
-            <span id="color">
-               <input type="radio" name="color" id="default" checked="checked"/><label for="default">Default</label>
-               <input type="radio" name="color" id="single" /><label for="single">Mono</label>
-               <input type="radio" name="color" id="multi" /><label for="multi">Multi</label>
-            </span>
-         </div>
-      </div>
 
       <div>
          <div class="mlabel">
@@ -439,121 +458,192 @@ This example also makes use of the jQuery UI Buttonset widget to make for a cons
          <div>
             <span id="type">
                <input type="radio" name="type" id="bar" checked="checked"/><label for="bar">Bar</label>
+               <input type="radio" name="type" id="area" /><label for="area">Area</label>
                <input type="radio" name="type" id="line" /><label for="line">Line</label>
             </span>
          </div>
       </div>
 
-      <div>
-         <div class="mlabel">
-            Include:
-         </div>
-         <div>
-            <span id="include">
-               <input type="checkbox" id="usa" /><label for="usa">USA</label>
-               <input type="checkbox" id="russia" /><label for="russia">Russia</label>
-               <input type="checkbox" id="uk" /><label for="uk">UK</label>
-               <input type="checkbox" id="germany" /><label for="germany">Germany</label>
-               <input type="checkbox" id="denmark" /><label for="denmark">Denmark</label>
-            </span>
-         </div>
-      </div>
-
    </div>
-   <div class="legend"></div>
+
    <div class="graph"></div>
 </div>
 
 <script>
 
-$(function() {
-    var data = [
-           {
-               id: "usa",
-               label: "USA",
-               data: [[1988, 483994], [1989, 479060], [1990, 457648], [1991, 401949], [1992, 424705], [1993, 402375], [1994, 377867], [1995, 357382], [1996, 337946], [1997, 336185], [1998, 328611], [1999, 329421], [2000, 342172], [2001, 344932], [2002, 387303], [2003, 440813], [2004, 480451], [2005, 504638], [2006, 528692]]
-           },
-           {
-               id: "russia",
-               label: "Russia",
-               data: [[1988, 218000], [1989, 203000], [1990, 171000], [1991, 0], [1992, 42500], [1993, 37600], [1994, 36600], [1995, 21700], [1996, 19200], [1997, 21300], [1998, 13600], [1999, 14000], [2000, 19100], [2001, 21300], [2002, 23600], [2003, 25100], [2004, 26100], [2005, 31100], [2006, 34700]]
-           },
-           {
-               id: "uk",
-               label: "UK",
-               data: [[1988, 62982], [1989, 62027], [1990, 60696], [1991, 62348], [1992, 58560], [1993, 56393], [1994, 54579], [1995, 50818], [1996, 50554], [1997, 48276], [1998, 47691], [1999, 47529], [2000, 47778], [2001, 48760], [2002, 50949], [2003, 57452], [2004, 60234], [2005, 60076], [2006, 59213]]
-           },
-           {
-               id: "germany",
-               label: "Germany",
-               data: [[1988, 55627], [1989, 55475], [1990, 58464], [1991, 55134], [1992, 52436], [1993, 47139], [1994, 43962], [1995, 43238], [1996, 42395], [1997, 40854], [1998, 40993], [1999, 328611], [2000, 41147], [2001, 40474], [2002, 40604], [2003, 40044], [2004, 38816], [2005, 38060], [2006, 36984]]
-           },
-           {
-               id: "denmark",
-               label: "Denmark",
-               data: [[1988, 62982], [1989, 62027], [1990, 60696], [1991, 62348], [1992, 58560], [1993, 56393], [1994, 54579], [1995, 50818], [1996, 50554], [1997, 48276], [1998, 47691], [1999, 47529], [2000, 47778], [2001, 48760], [2002, 50949], [2003, 57452], [2004, 60234], [2005, 60076], [2006, 59213]]
-           }
-       ],
-       len = data.length,
-       options;
-
+var data = [
+        { label: 'One', data: [[1, 12], [2, 4], [3, 5], [4, 25], [5, 16]] },
+        { label: 'Two', data: [[1, 5], [2, 25], [3, 4], [4, 16], [5, 12]] },
+        { label: 'Three', data: [[1, 5], [2, 16], [3, 25], [4, 4], [5, 12]] }
+     ],
     options = {
-          legend: { show: true, container: $('.legend') },
-          series: {
-              stack: true,
-          },
-          yaxis: { min: 0, max: 1000000 },
-          xaxis: { tickDecimals: 0 }
-       };
+         legend: { show: false },
+         lines: { show: true },
+         series: { /* set based on button in drawGraph */ },
+         yaxis: { min: 0 },
+         xaxis: { tickDecimals: 0 },
+         grid: { hoverable: true, clickable: true, autoHighlight: true }
+      },
+    clickTips, hoverTip;
 
-    var drawGraph = function ( e ) {
 
-          var d = [], c = [], z;
+function toolTipHTML( stat, series ) {
 
-          if ( $('#color :checked').attr('id') == 'single' ) {
-             options.colors = $.map( data, function ( o, i ) {
-                        return jQuery.Color('blue').lightness(0.7-i/(len*1.2)).toHexString();
-                      });
-          } else if ( $('#color :checked').attr('id') == 'multi' ) {
-             options.colors = $.map( data, function ( o, i ) {
-                        return jQuery.Color({ hue: (i*200/len), saturation: 0.95, lightness: 0.35, alpha: 1 }).toHexString();
-                      });
-          } else {
-             options.colors = [];
-          }
+   var html = '';
 
-          if ( $('#type :checked').attr('id') == 'bar' ) {
-             options.lines = null;
-             options.bars = { show: true, barWidth: 0.6, align: 'center' };
-          } else {
-             options.bars = null;
-             options.lines = { show: true, fill: true };
-          }
+   html += '<div class="tooltip">';
+   html += '<div>';
 
-          for ( z=0;z<len;z++) {
-             if ( $('#include input').eq(z).is(':checked') ) {
-                d.push( data[z] );
-                c.push( options.colors[z] );
-             }
-          }
+   if ( series )
+      html += '<span class="series">'+series+'</span>';
 
-          options.colors = c;
-          options.legend.noColumns = len;
+   html += '<span class="stats">'+stat+'</span>';
+   html += '</div>';
+   html += '</div>';
 
-          $.plot($(".graph"), d, options);
+   return html;
+
+}
+
+function clearTooltips() {
+
+   if ( hoverTip )
+      hoverTip.remove();
+
+   if ( clickTips )
+      $.each( clickTips, function ( i, t ) { t.remove(); });
+
+   hoverTip = null;
+   clickTips = null;
+
+}
+
+function setOptions() {
+
+   if ( $('#type :checked').attr('id') == 'bar' ) {
+      options.lines.show = false;
+      options.series = {
+            stack: true,
+            bars: { show: true, barWidth: 0.7, align: 'center' }
+         };
+   } else if ( $('#type :checked').attr('id') == 'area' ) {
+      options.lines.show = true;
+      options.series = {
+            stack: true,
+            lines: { show: true, fill: true }
+         };
+   } else { // line
+      delete options.series;
+      options.lines.show = true;
+   }
+
+}
+
+function bindEvents ( plot ) {
+
+   $('.graph').on('plothover', function ( event, pos, item ) {
+
+       var ofs = { height: 0, width: 0 },
+           fmtd;
+
+       if ( clickTips ) return;
+
+       clearTooltips();
+
+       if (item) {
+
+          fmtd = item.series.data[item.dataIndex][1];
+
+          hoverTip = $(toolTipHTML( fmtd, item.series.label ));
+
+          $('.wrapper').append(hoverTip);
+
+          ofs.height = hoverTip.outerHeight();
+          ofs.width = hoverTip.outerWidth();
+
+          hoverTip.offset({ left: item.pageX - ofs.width / 2, top: item.pageY - ofs.height - 15 });
+
        }
 
-    $('#color').buttonset();
-    $('#type').buttonset();
-    $('#include').children('input').attr('checked', 'checked').end().buttonset();
+   });
 
+
+  $('.graph').on('plotclick', function ( event, pos, item ) {
+
+      var x = 0, ttip, fmtd, dp, pz, tmp, xtickl,
+          ofs = { pageX: 0, pageY: 0, height: 0, width: 0, plotX: 0, plotY: 0 },
+          axis = plot.getAxes(),
+          series = plot.getData(),
+          xcnt = series[0].data.length;
+
+      plot.unhighlight();
+      clearTooltips();
+
+      if ( item ) {
+
+         clickTips = [];
+
+         tmp = $('.graph').offset();
+         ofs.plotX = tmp.left;
+         ofs.plotY = tmp.top;
+
+         tmp = plot.getPlotOffset();
+         ofs.plotX += tmp.left;
+         ofs.plotY += tmp.top;
+
+         xtickl = Math.ceil(xcnt / 12);
+
+         for ( ;x<xcnt;x+=xtickl ) {
+
+            plot.highlight(item.seriesIndex, x);
+
+            pz = series[item.seriesIndex].datapoints.pointsize;
+            dp = [ series[item.seriesIndex].datapoints.points[x*pz], series[item.seriesIndex].datapoints.points[x*pz+1] ];
+
+            fmtd = series[item.seriesIndex].data[x][1];
+
+            ofs.pageX = parseInt(axis.xaxis.p2c(dp[0]) + ofs.plotX);
+            ofs.pageY = parseInt(axis.yaxis.p2c(dp[1]) + ofs.plotY);
+
+            ttip = $(toolTipHTML( fmtd, (item.dataIndex == x ? item.series.label : null) ));
+
+            $('.wrapper').append(ttip);
+
+            ofs.width = ttip.outerWidth();
+            ofs.height = ttip.outerHeight();
+
+            ttip.offset({ left: ofs.pageX - ofs.width / 2, top: ofs.pageY - ofs.height - 15 });
+
+            clickTips[x] = ttip;
+
+         }
+      }
+
+   });
+}
+
+function drawGraph () {
+
+   var plot;
+
+   clearTooltips();
+   setOptions();
+
+   plot = $.plot($('.graph'), data, options);
+
+   bindEvents( plot );
+}
+
+$(function() {
+
+    $('#type').buttonset();
     $('input').click(drawGraph);
 
     drawGraph();
 
 });
-</script>
 
+</script>
 
   </div>
 </div>
