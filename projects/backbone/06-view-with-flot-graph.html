@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Adding Interaction to Flot Graphs - Tooltips and Labeled Series</title>
+    <title>Integrating Flot Graphs in a Backbone View</title>
     
     <meta name="author" content="Ben Olson">
 
@@ -331,7 +331,7 @@
       <div class="content">
         
 <div class="page-header">
-  <h3>Adding Interaction to Flot Graphs - Tooltips and Labeled Series </h3>
+  <h3>Integrating Flot Graphs in a Backbone View </h3>
 
 
 <hr style="margin: 0px"/>
@@ -340,8 +340,8 @@
 
 <!-- Place this tag where you want the +1 button to render. -->
 <div style="position: relative; top: -20px; text-align: right; height: 30px">
-  <span><a href="http://benknowscode.wordpress.com/2013/02/10/adding-interaction-to-flot-graphs-tooltips-and-labeled-series/">View Blog</a></span>&nbsp;&nbsp;
-  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/canvas/A-flot-interact-labels.html">View Source</a></span>&nbsp;&nbsp;
+  <span><a href="http://benknowscode.wordpress.com/2013/02/17/integrating-flot-graphs-in-a-backbone-view/">View Blog</a></span>&nbsp;&nbsp;
+  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/backbone/06-view-with-flot-graph.html">View Source</a></span>&nbsp;&nbsp;
   <div class="g-plusone" data-size="small"></div>
 </div>
 
@@ -385,265 +385,213 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 -->
 
-
+<script src="globalize.js"></script>
+<script src="underscore.min.js"></script>
+<script src="backbone.min.js"></script>
 <script src="flot/jquery.flot.js"></script>
 <script src="flot/jquery.flot.stack.js"></script>
 
+<script src="moviedata.js"></script>
+
 <style>
 
-.wrapper {
-   margin: auto;
-   width: 800px;
-   margin-top: 50px;
-   font-size: 12pt;
-}
+.wrapper { position: relative; width: 800px; margin: auto; margin-top: 20px; font-size: 12pt; }
+.title { color: #888; margin-left: 50px; }
+.graph { position: relative; margin-top: 20px; }
+.legend { position: absolute; right: 0; }
+.plot { width: 720px; height: 400px; }
 
-.graph {
-   margin-top: 20px;
-   width: 700px;
-   height: 400px;
-}
-
-.ui-button-text { font-size: 0.8em; }
+.ui-button-text { font-size: 0.7em; }
+.controls { position: absolute; right: 80px; top: 0; }
 .controls > div { display: inline-block; }
 .controls .mlabel { margin: 5px; color: #888; font-weight: bold; font-size: 0.9em; }
-
-.tooltip {
-   font-size: 1em;
-   opacity: 1;
-   padding: 0;
-   position: absolute;
-   z-index: 12;
-   color: #888;
-   background: #fff;
-   border: 1px solid #aaa;
-   -moz-box-shadow: 0px 1px 1px #ddd;
-   -webkit-box-shadow: 0px 1px 1px #ddd;
-   box-shadow: 0px 1px 2px #ddd;
-}
-
-.tooltip div {
-   position: relative;
-   text-align: center;
-   margin: 3px;
-   max-width:100px;
-}
-
-.tooltip span { font-size: 0.7em; display: block; }
-.tooltip span.series { color: #333; }
-
-.tooltip:after {
-   content: ' ';
-   position: absolute;
-   width: 0;
-   height: 0;
-   margin-left: -5px;
-   bottom: -10px;
-   left: 50%;
-   border-width: 5px;
-   border-style: solid;
-   border-color: #aaa transparent transparent transparent ;
-}
 
 </style>
 
 <div class="discussion">
-Example showing how to respond to interaction events fired by Flot.  Hovering will label a single point.  Clicking will
-label all the points in the series.  Works with both line and bar charts including the stack plugin.
+Example that demostrates how to transform a Backbone Collection inside a View
+into a dataset that can be used by Flot to generate a graph.  The goal was to build
+something that was relatively reusable such that other the columns used in the graph
+could be switched or other datasets could be plugged in.  The Series options below
+allow you to swap the x-axis and series groups or turn off the series stacking entirely.
 </div>
 
 <div class="wrapper">
+   <h3 class="title">Gross by Year/Studio</h3>
    <div class="controls">
 
       <div>
-         <div class="mlabel">
-            Type:
-         </div>
-         <div>
-            <span id="type">
-               <input type="radio" name="type" id="bar" checked="checked"/><label for="bar">Bar</label>
-               <input type="radio" name="type" id="area" /><label for="area">Area</label>
-               <input type="radio" name="type" id="line" /><label for="line">Line</label>
-            </span>
-         </div>
+         <span class="mlabel">
+            Series:
+         </span>
+         <span id="series">
+            <input type="radio" name="series" id="studio" checked="checked"/><label for="studio">Studio</label>
+            <input type="radio" name="series" id="year" /><label for="year">Year</label>
+            <input type="radio" name="series" id="none" /><label for="none">None</label>
+         </span>
       </div>
 
    </div>
-
-   <div class="graph"></div>
 </div>
+
 
 <script>
 
-var data = [
-        { label: 'One', data: [[1, 12], [2, 4], [3, 5], [4, 25], [5, 16]] },
-        { label: 'Two', data: [[1, 5], [2, 25], [3, 4], [4, 16], [5, 12]] },
-        { label: 'Three', data: [[1, 5], [2, 16], [3, 25], [4, 4], [5, 12]] }
-     ],
-    options = {
-         legend: { show: false },
-         lines: { show: true },
-         series: { /* set based on button in drawGraph */ },
-         yaxis: { min: 0 },
-         xaxis: { tickDecimals: 0 },
-         grid: { hoverable: true, clickable: true, autoHighlight: true }
-      },
-    clickTips, hoverTip;
+var Movie = Backbone.Model.extend({
 
-
-function toolTipHTML( stat, series ) {
-
-   var html = '';
-
-   html += '<div class="tooltip">';
-   html += '<div>';
-
-   if ( series )
-      html += '<span class="series">'+series+'</span>';
-
-   html += '<span class="stats">'+stat+'</span>';
-   html += '</div>';
-   html += '</div>';
-
-   return html;
-
-}
-
-function clearTooltips() {
-
-   if ( hoverTip )
-      hoverTip.remove();
-
-   if ( clickTips )
-      $.each( clickTips, function ( i, t ) { t.remove(); });
-
-   hoverTip = null;
-   clickTips = null;
-
-}
-
-function setOptions() {
-
-   if ( $('#type :checked').attr('id') == 'bar' ) {
-      options.lines.show = false;
-      options.series = {
-            stack: true,
-            bars: { show: true, barWidth: 0.7, align: 'center' }
-         };
-   } else if ( $('#type :checked').attr('id') == 'area' ) {
-      options.lines.show = true;
-      options.series = {
-            stack: true,
-            lines: { show: true, fill: true }
-         };
-   } else { // line
-      delete options.series;
-      options.lines.show = true;
+   defaults: {
+      title: '',
+      gross: 0,
+      rank: -1,
+      year: 1900,
+      studio: ''
    }
 
-}
+});
 
-function bindEvents ( plot ) {
+var Movies = Backbone.Collection.extend({
 
-   $('.graph').on('plothover', function ( event, pos, item ) {
+   model: Movie,
 
-       var ofs = { height: 0, width: 0 },
-           fmtd;
+   comparator: function(movie) {
+      return movie.get('year');
+   }
 
-       if ( clickTips ) return;
+});
 
-       clearTooltips();
+var MovieGraph = Backbone.View.extend({
 
-       if (item) {
+   attributes: { class: 'graph' },
 
-          fmtd = item.series.data[item.dataIndex][1];
+   seriesColumn: 'year',
+   xaxisColumn: 'studio',
+   yaxisColumn: 'gross',
 
-          hoverTip = $(toolTipHTML( fmtd, item.series.label ));
-
-          $('.wrapper').append(hoverTip);
-
-          ofs.height = hoverTip.outerHeight();
-          ofs.width = hoverTip.outerWidth();
-
-          hoverTip.offset({ left: item.pageX - ofs.width / 2, top: item.pageY - ofs.height - 15 });
-
-       }
-
-   });
-
-
-  $('.graph').on('plotclick', function ( event, pos, item ) {
-
-      var x = 0, ttip, fmtd, dp, pz, tmp, xtickl,
-          ofs = { pageX: 0, pageY: 0, height: 0, width: 0, plotX: 0, plotY: 0 },
-          axis = plot.getAxes(),
-          series = plot.getData(),
-          xcnt = series[0].data.length;
-
-      plot.unhighlight();
-      clearTooltips();
-
-      if ( item ) {
-
-         clickTips = [];
-
-         tmp = $('.graph').offset();
-         ofs.plotX = tmp.left;
-         ofs.plotY = tmp.top;
-
-         tmp = plot.getPlotOffset();
-         ofs.plotX += tmp.left;
-         ofs.plotY += tmp.top;
-
-         xtickl = Math.ceil(xcnt / 12);
-
-         for ( ;x<xcnt;x+=xtickl ) {
-
-            plot.highlight(item.seriesIndex, x);
-
-            pz = series[item.seriesIndex].datapoints.pointsize;
-            dp = [ series[item.seriesIndex].datapoints.points[x*pz], series[item.seriesIndex].datapoints.points[x*pz+1] ];
-
-            fmtd = series[item.seriesIndex].data[x][1];
-
-            ofs.pageX = parseInt(axis.xaxis.p2c(dp[0]) + ofs.plotX);
-            ofs.pageY = parseInt(axis.yaxis.p2c(dp[1]) + ofs.plotY);
-
-            ttip = $(toolTipHTML( fmtd, (item.dataIndex == x ? item.series.label : null) ));
-
-            $('.wrapper').append(ttip);
-
-            ofs.width = ttip.outerWidth();
-            ofs.height = ttip.outerHeight();
-
-            ttip.offset({ left: ofs.pageX - ofs.width / 2, top: ofs.pageY - ofs.height - 15 });
-
-            clickTips[x] = ttip;
-
+   plotOptions: {
+       yaxis: {},
+       xaxis: {},
+       legend: { show: true, container: '.legend' },
+       grid: { hoverable: true, clickable: true, autoHighlight: true },
+       series: {
+            stack: true,
+            bars: { show: true, fill: 0.7, barWidth: 0.8, align: 'center' }
          }
+   },
+
+   render: function() {
+
+      this.$el.html('<div class="legend"></div><div class="plot"></div>');
+
+      return this;
+   },
+
+   renderGraph: function() {
+
+      var data = this.collection.toJSON(),
+          options = _.clone(this.plotOptions),
+          sC = this.seriesColumn,
+          xC = this.xaxisColumn,
+          yC = this.yaxisColumn,
+          svalue = '',
+          series = {},
+          xaxis = {},
+          base = {},
+          xticks = 0,
+          i;
+
+      if ( data.length > 0 ) {
+
+         // All x-axis data must be passed as an index
+         // from 0 .. n.  Setup hash mapping of x-axis values to
+         // an indexed number so they can be looked up below
+         // Also, stacked charts don't work well with missing
+         // values so make sure each series will have a data point
+         // for each x-axis index.
+         for ( i=0;i<data.length;i++ ) {
+
+            if ( typeof xaxis[data[i][xC]] == 'undefined' ) {
+               xaxis[data[i][xC]] = xticks;
+               base[xticks] = 0;
+               xticks++;
+            }
+         }
+
+         // Build series data.  Sum y-axis values over each series and x-axis point
+         for ( i=0;i<data.length;i++ ) {
+
+            svalue = sC ? data[i][sC] : 'all';
+
+            if ( !series[svalue] ) {
+               // Initialize series with hash setup above to ensure
+               // each x-axis point has a value (zero).  Set the label for
+               // the legend
+               series[svalue] = { data: _.clone( base ), label: svalue };
+            }
+
+            // Depending on the data, adding may be desired to group/summarize
+            series[svalue].data[ xaxis[data[i][xC]] ] += data[i][yC];
+         }
+
+         // Everything is a hash right now object[idx] = val
+         // Flot wants an array of arrays [ [idx, val] ... ]
+         // Use _.map to convert:
+         options.xaxis.ticks = _.map( xaxis, function ( val, idx ) { return [val, idx]; } );
+
+         // Same with the series data
+         for ( i in series )
+            series[i].data = _.map( series[i].data, function ( o, i ) { return [ i, o ]; });
+
+         // Again, another hash that must be an array of objects
+         // Convert again with _.map
+         series = _.map( series, function ( z ) { return z; } );
+
+         // Make the y-axis pretty.  Assuming Gross dollars is the y-axis
+         // here.  Format accordingly
+         options.yaxis.tickFormatter = function (val, axis) {
+                return Globalize.format(val, 'C0');
+            };
+
+         options.legend.show = (sC !== null);
+
+         // Now, the chart can be drawn ...
+         this.$('.legend').html('');
+         $.plot( this.$('.plot'), series, options );
       }
 
-   });
-}
+   }
 
-function drawGraph () {
+});
 
-   var plot;
-
-   clearTooltips();
-   setOptions();
-
-   plot = $.plot($('.graph'), data, options);
-
-   bindEvents( plot );
-}
 
 $(function() {
 
-    $('#type').buttonset();
-    $('input').click(drawGraph);
+   var movieList = new Movies(movieData);
 
-    drawGraph();
+   var movieView = new MovieGraph({ collection: movieList });
+
+   $('.wrapper').append( movieView.render().$el );
+
+   $('#series').children('input').removeProp('checked');
+   $('#studio').prop('checked', true);
+   $('#series').buttonset();
+
+   $('input').click(function () {
+
+          if ( $('#series :checked').attr('id') == 'studio' ) {
+             movieView.seriesColumn = 'year';
+             movieView.xaxisColumn = 'studio';
+          } else if ( $('#series :checked').attr('id') == 'year' ) {
+             movieView.seriesColumn = 'studio';
+             movieView.xaxisColumn = 'year';
+          } else {
+             movieView.seriesColumn = null;
+             movieView.xaxisColumn = 'studio';
+          }
+
+          movieView.renderGraph();
+      });
+
+   movieView.renderGraph();
 
 });
 
