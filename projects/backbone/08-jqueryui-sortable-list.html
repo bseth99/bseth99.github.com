@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Creating an SVG Slider Using Raphael Path Functions</title>
+    <title>Custom Sorting with a Collection bound to a jQuery UI Sortable Widget</title>
     
     <meta name="author" content="Ben Olson">
 
@@ -339,7 +339,7 @@
       <div class="content">
         
 <div class="page-header">
-  <h3>Creating an SVG Slider Using Raphael Path Functions </h3>
+  <h3>Custom Sorting with a Collection bound to a jQuery UI Sortable Widget </h3>
 
 
 <hr style="margin: 0px"/>
@@ -348,8 +348,8 @@
 
 <!-- Place this tag where you want the +1 button to render. -->
 <div style="position: relative; top: -20px; text-align: right; height: 30px">
-  <span><a href="http://benknowscode.wordpress.com/2012/11/01/finding-points-along-an-svg-path-using-raphael/">View Blog</a></span>&nbsp;&nbsp;
-  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/svg/4-raphael-svg-slider.html">View Source</a></span>&nbsp;&nbsp;
+  <span><a href="http://benknowscode.wordpress.com">View Blog</a></span>&nbsp;&nbsp;
+  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/backbone/08-jqueryui-sortable-list.html">View Source</a></span>&nbsp;&nbsp;
   <div class="g-plusone" data-size="small"></div>
 </div>
 
@@ -393,118 +393,245 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 -->
 
-<style>
-.wrapper { position: relative; }
-</style>
 
-<script src="raphael.min.js"></script>
+<script src="underscore.min.js"></script>
+<script src="backbone.min.js"></script>
 
 <div class="discussion">
-This demo utilizes some of the path funtionality in Raphael to create a slider that follows a
-non-linear path.  The demo makes use of the getPointAtLength() function to find a point on the path
-relative to the current drag position.  Click one of the buttons to change the shape the slider know
-will be attached to and then drag the knob to see how it works.
+This demo replicates the basic example on the jQuery UI site for the Sortable widget.  However, the
+contents of the list are backed by a Backbone collection and the MVC framework is used to manage
+and respond to the user interaction.  As you move items around, the data is stringified and echoed
+at the bottom of the page to show that the collection has changed to match the current state of the
+list.
 </div>
 <br/>
 
-<div class="actions">
- <button id="wiggles">Wiggles</button>
- <button id="circle">Circle</button>
- <button id="ellipse">Ellipse</button>
- <button id="rectangle">Rectangle</button>
-</div>
+<style>
+ul { list-style-type: none; margin: 5px; padding: 0; width: 40%; }
+ul li { margin-top: 3px; padding: 0.4em; padding-left: 1.5em; font-size: 1.1em; height: 18px; }
+ul li span { position: absolute; margin-left: -1.3em; }
+</style>
+
+<script>
+
+var ThingModel = Backbone.Model.extend({
+
+   defaults: {
+      order: 0,
+      title: ''
+   }
+
+});
+
+var ThingCollection = Backbone.Collection.extend({
+
+   model: ThingModel,
+   comparator: 'order'
+
+});
+
+var ThingItem = Backbone.View.extend({
+
+   template: null,
+
+   tagName: 'li',
+   className: 'ui-state-default',
+
+   render: function () {
+
+      this.$el.html( this.model.get('title') );
+
+      return this;
+   }
+
+});
+
+var ThingList = Backbone.View.extend({
+
+   tagName: 'ul',
+
+   itemView: ThingItem,
+
+   _listItems: null,
+   _listIsSyncing: false,
+
+   orderAttr: 'order',
+
+   render: function () {
+
+      this._listItems = {};
+
+      this.listenTo( this.collection, 'sync reset', this.listSync );
+
+      this.listSync();
+
+      return this;
+   },
+
+   events: {
+      'sortupdate'                           :  'handleSortComplete'
+   },
+
+   /**
+   * Respond to the Sortable's update event.
+   *
+   * Iterate over each view in the list and use its position relative to
+   * its siblings to set the ordering attribute on the associated model
+   *
+   * This does not appear to trigger a resort on the collection so
+   * explicitly do this so downstream processing is working with the
+   * right order of the models.
+   *
+   */
+
+   handleSortComplete: function () {
+
+      var oatr = this.orderAttr;
+
+      _.each( this._listItems, function ( v ) {
+            v.model.set(oatr, v.$el.index());
+         });
+
+      this.collection.sort({silent: true});
+      this.listSetup();
+
+      this.trigger('sorted');
+   },
+
+
+   /**
+   * Configure the UI.
+   *
+   * Ensure the Sortable widget is initialized on the list.
+   *
+   */
+
+   listSetup: function () {
+
+      var $ods = this.$('li');
+
+      if ( $ods.length == 1 ) {
+         if ( this.$el.data('ui-sortable') )
+            this.$el.sortable('destroy');
+      } else {
+         this.$el.sortable({ containment: 'parent', tolerance: 'pointer' });
+      }
+
+   },
+
+   /**
+   * Respond to collection resets or syncs and rebuid the list
+   *
+   */
+
+   listSync: function () {
+
+      var list = this.collection.models
+
+      this._listIsSyncing = true;
+
+      _.invoke( this._listItems, 'remove' );
+      this._listItems = {};
+
+      for ( var m in list )
+         this.listAdd( list[m] );
+
+      this._listIsSyncing = false;
+
+      this.listSetup();
+
+   },
+
+   /**
+   * Respond to collection add event by adding a new view to the list
+   * and binding it to the model being added
+   *
+   */
+
+   listAdd: function ( model ) {
+
+      var v;
+
+      if ( !this._listItems[model.cid] ) {
+         v = this._listItems[model.cid] = new this.itemView({ model: model });
+         this.$el.append(v.render().$el);
+      }
+
+      if ( !this._listIsSyncing )
+         this.listSetup();
+   },
+
+   /**
+   * Respond to collection remove event by removing the view associated
+   * to the model from the list
+   *
+   */
+
+   listRemove: function ( model ) {
+
+      if ( this._listItems[model.cid] ) {
+         this._listItems[model.cid].remove();
+         delete this._listItems[model.cid];
+      }
+
+      if ( !this._listIsSyncing )
+         this.listSetup();
+
+   },
+
+   /**
+   * Chain onto Backbone.View.remove and ensure all the child views
+   * in the list are removed.
+   *
+   */
+
+   remove: function () {
+
+      _.invoke( this._listItems, 'remove' );
+
+   }
+
+});
+
+</script>
 
 <div class="wrapper">
 </div>
 
+<br/>
+<h5>
+   Current Model Ordering in Collection:
+</h5>
+<pre id="json">
+</pre>
+
 <script>
 
-var pdefs = {
-      wiggles: {
-          path: "M295.186,122.908c12.434,18.149,32.781,18.149,45.215,0l12.152-17.736c12.434-18.149,22.109-15.005,21.5,6.986l-0.596,21.49c-0.609,21.992,15.852,33.952,36.579,26.578l20.257-7.207c20.728-7.375,26.707,0.856,13.288,18.29l-13.113,17.037c-13.419,17.434-7.132,36.784,13.971,43.001l20.624,6.076c21.103,6.217,21.103,16.391,0,22.608l-20.624,6.076c-21.103,6.217-27.39,25.567-13.971,43.001l13.113,17.037c13.419,17.434,7.439,25.664-13.287,18.289l-20.259-7.207c-20.727-7.375-37.188,4.585-36.578,26.576l0.596,21.492c0.609,21.991-9.066,25.135-21.5,6.986L340.4,374.543c-12.434-18.148-32.781-18.148-45.215,0.001l-12.152,17.736c-12.434,18.149-22.109,15.006-21.5-6.985l0.595-21.492c0.609-21.991-15.851-33.951-36.578-26.576l-20.257,7.207c-20.727,7.375-26.707-0.855-13.288-18.29l13.112-17.035c13.419-17.435,7.132-36.785-13.972-43.002l-20.623-6.076c-21.104-6.217-21.104-16.391,0-22.608l20.623-6.076c21.104-6.217,27.391-25.568,13.972-43.002l-13.112-17.036c-13.419-17.434-7.439-25.664,13.288-18.29l20.256,7.207c20.728,7.374,37.188-4.585,36.579-26.577l-0.595-21.49c-0.609-21.992,9.066-25.136,21.5-6.986L295.186,122.908z",
-          transform: 't-50,0r100s1.2'
-        },
-      circle: {
-          path: Raphael._getPath.circle({attrs:{cx:300,cy:300,r:200}}),
-          transform: 'r90'
-        },
-      ellipse: {
-          path: Raphael._getPath.ellipse({attrs:{cx:300,cy:300,rx:150,ry:250}}),
-          transform: 'r90'
-        },
-      rectangle: {
-          path: [
-					['M',450,175],
-					['l',0,90],
-					['a',10,10,0,0,1,-10,10],
-					['l',-390,0],
-					['a',10,10,0,0,1,-10,-10],
-					['l',0,-190],
-					['a',10,10,0,0,1,10,-10],
-					['l',390,0],
-					['a',10,10,0,0,1,10,10],
-					['l',0,90],
-					['z']
-				],
-          transform: 'r0'
-        }
-     },
-    useDef = 'wiggles';
-
-
-function run()
-{
-   var paper = Raphael( $('.wrapper')[0], 600, 600 ),
-
-       path = paper.path( Raphael.transformPath(pdefs[useDef].path, pdefs[useDef].transform) )
-                   .attr( 'stroke-width', 10 )
-                   .attr( 'stroke', 'rgb(80,80,80)' ),
-
-       knob = paper.ellipse( 0, 0, 25, 15 )
-                   .attr( 'fill', 'lime' )
-                   .attr( 'stroke', 'rgba(80,80,80,0.5)' ),
-
-       $shim = $('<div>')
-                    .css( {position: 'absolute', width: 50, height: 50 } )
-                    .appendTo( $('.wrapper') ),
-
-       len = path.getTotalLength(),
-       bb = path.getBBox(),
-       mid = {x: bb.x+bb.width/2, y: bb.y+bb.height/2},
-
-       pal = path.getPointAtLength(0);
-
-   knob.translate(pal.x,pal.y).rotate(pal.alpha);
-   $shim.css({ left: pal.x-25, top: pal.y-25 });
-
-   $shim.draggable({
-         drag: function ( e, ui ) {
-
-            // Find lines and then angle to determine
-            // percentage around an imaginary circle.
-            var t = ( Raphael.angle( ui.position.left+25, ui.position.top+25, mid.x, mid.y ) ) / 360;
-
-            // Using t, find a point along the path
-            pal = path.getPointAtLength( (t * len) % len );
-
-            // Move the knob to the new point
-            knob.transform( 't' + [pal.x, pal.y] + 'r' + pal.alpha );
-         },
-         stop: function ( e, ui ) {
-            $shim.css({ left: pal.x-25, top: pal.y-25 });
-         }
-      });
+function prettyPrintData(data) {
+   $('#json').text( JSON.stringify(data.toJSON()).replace(/{/g, '\n\t{').slice(0, -1)+'\n]' );
 }
 
-$(function()
-{
-   $('button')
-      .button()
-      .click(function () {
-            $('.wrapper').html('');
-            useDef = this.id;
-            run();
-         });
+$(function() {
+
+   var things = new ThingCollection([
+         { order: 0, title: 'Item 1' },
+         { order: 1, title: 'Item 2' },
+         { order: 2, title: 'Item 3' },
+         { order: 3, title: 'Item 4' },
+         { order: 4, title: 'Item 5' },
+         { order: 5, title: 'Item 6' },
+         { order: 6, title: 'Item 7' }
+      ]);
+
+   var list = new ThingList({ collection: things });
+
+   $('.wrapper').append( list.render().$el );
+
+   list.on('sorted', function () {
+         prettyPrintData(things);
+      });
+
+   prettyPrintData(things);
 });
 
 </script>
