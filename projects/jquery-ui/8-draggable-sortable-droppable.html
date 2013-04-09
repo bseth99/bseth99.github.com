@@ -1,0 +1,599 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Mixing jQuery UI Draggable, Droppable, and Sortable Interaction Widgets</title>
+    
+    <meta name="author" content="Ben Olson">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le styles -->
+    <link href="/assets/themes/twitter/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/themes/twitter/css/style.css?body=1" rel="stylesheet" type="text/css" media="all">
+    <link href="/assets/style.css" rel="stylesheet">
+
+    <!-- Le fav and touch icons -->
+  <!-- Update these with your own images
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  -->
+
+   <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css">
+
+   <script src="http://code.jquery.com/jquery.js"></script>
+   <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+   <script src="/assets/js/jquery.ui.touch-punch.js"></script>
+
+  </head>
+
+  <body>
+
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="/">Ben's Sandbox</a>
+          <ul class="nav">
+            
+            
+            
+
+
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/projects/index.html">Projects</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+
+
+
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="content">
+        
+<div class="page-header">
+  <h3>Mixing jQuery UI Draggable, Droppable, and Sortable Interaction Widgets </h3>
+
+
+<hr style="margin: 0px"/>
+
+
+
+<!-- Place this tag where you want the +1 button to render. -->
+<div style="position: relative; top: -20px; text-align: right; height: 30px">
+  <span><a href="http://benknowscode.wordpress.com">View Blog</a></span>&nbsp;&nbsp;
+  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/jquery-ui/8-draggable-sortable-droppable.html">View Source</a></span>&nbsp;&nbsp;
+  <div class="g-plusone" data-size="small"></div>
+</div>
+
+<!-- Place this tag after the last +1 button tag. -->
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = false;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+
+
+
+<div class="row">
+  <div class="span12">
+    
+
+<script src="jquery-hoverIntent.js"></script>
+
+
+<style>
+
+.wrapper { width: 300px; height: 500px; margin: auto; }
+.wrapper > h5 { padding: 0; margin: 0; }
+.wrapper > div { margin-bottom: 15px; border: 1px solid #aaa; }
+
+.item-wrapper { position: relative; padding: 3px; color: #555; }
+.item-wrapper:nth-child(even) { background-color: #f8f8f8; }
+
+.drag-handle { position: absolute; border: 3px solid transparent; left: 0; right: 0; top: 0; bottom: 0; cursor: move; }
+
+.item-container { position: relative; text-align: center; cursor: move; }
+.drop-container .item-container { cursor: default; }
+.sort-container .item-container { cursor: n-resize; }
+
+.item-wrapper.mx-state-moving { background-color: #fcefa1; color: #000; margin: 0; }
+
+.drag-container .item-wrapper.mx-content-hover { background-color: #cce0ff; color: #000; }
+.drop-container.mx-content-hover { background-color: #ccff99; }
+.sort-container .drag-handle.mx-content-hover { border-color: #cce0ff; }
+.sort-container .item-wrapper.mx-content-hover { color: #000; }
+
+
+
+</style>
+
+<div class="discussion">
+   This demo investigates how to integrate the different jQuery UI interaction widgets (Draggable, Sortable, and Droppable)
+   together so they work together and still leverage their built-in capabilities.  The goal is to be able to hook into the
+   callbacks and know where an item originated from and react accordingly.  Additionally, visual cues (ie hovering) to assist the
+   user with the interactions are added to experiment with different approaches.
+</div>
+<br/>
+
+<div class="wrapper">
+
+   <h5>Draggable</h5>
+   <div class="drag-container ui-corner-all">
+      <div class="item-wrapper">
+         <div class="item-container">Item 4</div>
+      </div>
+   </div>
+
+   <h5>Droppable</h5>
+   <div class="drop-container ui-corner-all">
+      <div class="item-wrapper">
+         <div class="item-container">Empty</div>
+      </div>
+   </div>
+
+   <h5>Sortable</h5>
+   <div class="sort-container ui-corner-all">
+
+      <div class="item-wrapper">
+         <div class="drag-handle"></div>
+         <div class="item-container">Item 1</div>
+      </div>
+
+      <div class="item-wrapper">
+         <div class="drag-handle"></div>
+         <div class="item-container">Item 2</div>
+      </div>
+
+      <div class="item-wrapper">
+         <div class="drag-handle"></div>
+         <div class="item-container">Item 3</div>
+      </div>
+
+   </div>
+
+
+</div>
+
+<script>
+
+   var items = 4;
+
+   function fixHelper( e, ui ) {
+
+      var $ctr = $(this);
+
+      ui.helper
+         .addClass('mx-state-moving ui-corner-all')
+         .outerWidth($ctr.outerWidth())
+         .find('.mx-content-hover')
+            .removeClass('mx-content-hover')
+            .end();
+   }
+
+   function toggleHover( e ) {
+
+      if ( e.type == 'mouseenter' )
+         $(this).addClass( 'mx-content-hover' );
+      else
+         $(this).removeClass( 'mx-content-hover' );
+
+   }
+
+   sdCfg = {
+
+         cursor: 'move',
+         zIndex: 200,
+         opacity: 0.75,
+         handle: '.drag-handle',
+         scroll: false,
+         containment: 'window',
+         appendTo: document.body,
+         helper: 'clone',
+         start: fixHelper
+
+   };
+
+   $('.drag-container')
+      .find('.item-wrapper').draggable({
+
+         cursor: 'move',
+         zIndex: 200,
+         opacity: 0.75,
+         scroll: false,
+         containment: 'window',
+         appendTo: document.body,
+         helper: 'clone',
+         connectToSortable: '.sort-container',
+         start: fixHelper
+
+         }).hover( toggleHover );
+
+   $('.sort-container')
+         .sortable({
+
+            containment: 'parent',
+            handle: '.item-container',
+            tolerance: 'pointer',
+            helper: 'clone',
+            start: fixHelper,
+
+            update: function ( e, ui ) {
+
+                  if ( ui.item.find('.drag-handle').length == 0 ) {
+
+                     $('.drag-container .item-container').html('Item ' + (++items));
+
+                     ui.item
+                        .find('.item-container')
+                           .before( $('<div class="drag-handle">') )
+                           .parent()
+                        .draggable(sdCfg)
+                        .hover( toggleHover )
+                        .find('.drag-handle')
+                           .hoverIntent( toggleHover );
+
+                     $(this).sortable('option', 'containment', 'parent');
+                  }
+
+               }
+
+      }).find('.item-wrapper')
+         .draggable(sdCfg)
+         .hover( toggleHover )
+         .find('.drag-handle')
+            .hoverIntent( toggleHover );
+
+
+   $('.drop-container').droppable({
+
+         hoverClass: 'mx-content-hover',
+         drop: function ( e, ui ) {
+
+               $(this).find('.item-container').html( ui.draggable.children('.item-container').html() );
+
+               if ( ui.draggable.parent().is('.drag-container') )
+                  $('.drag-container .item-container').html('Item ' + (++items));
+               else
+                  ui.draggable.remove();
+
+            }
+      });
+
+</script>
+
+
+  </div>
+</div>
+
+</div>
+
+
+      </div>
+
+      <footer>
+        <p>&copy; Ben Olson 2012
+          with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
+          and <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>
+        </p>
+      </footer>
+
+    </div> <!-- /container -->
+
+    
+
+
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-34780028-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+  </body>
+</html>
+
