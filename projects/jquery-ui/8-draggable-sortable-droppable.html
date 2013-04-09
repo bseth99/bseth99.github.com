@@ -356,7 +356,7 @@
 
 <!-- Place this tag where you want the +1 button to render. -->
 <div style="position: relative; top: -20px; text-align: right; height: 30px">
-  <span><a href="http://benknowscode.wordpress.com">View Blog</a></span>&nbsp;&nbsp;
+  <span><a href="http://benknowscode.wordpress.com/2013/04/09/mixing-jquery-ui-draggable-droppable-and-sortable-interaction-widgets/">View Blog</a></span>&nbsp;&nbsp;
   <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/jquery-ui/8-draggable-sortable-droppable.html">View Source</a></span>&nbsp;&nbsp;
   <div class="g-plusone" data-size="small"></div>
 </div>
@@ -552,7 +552,9 @@
                if ( ui.draggable.parent().is('.drag-container') )
                   $('.drag-container .item-container').html('Item ' + (++items));
                else
-                  ui.draggable.remove();
+                  // Defer removing the item after exiting the current call stack
+                  // so the Draggable widget can complete the drag processing
+                  setTimeout(function () { ui.draggable.remove(); }, 0);
 
             }
       });
