@@ -22,6 +22,7 @@ http://bseth99.github.com/projects/backbone/05-select-totals-control.html
 http://bseth99.github.com/projects/backbone/06-view-with-flot-graph.html
 http://bseth99.github.com/projects/backbone/07-forms-jqueryui-autocomplete.html
 http://bseth99.github.com/projects/backbone/08-jqueryui-sortable-list.html
+http://bseth99.github.com/projects/backbone/09-filtering-contact-list.html
 http://bseth99.github.com/projects/backbone/index.html
 http://bseth99.github.com/projects/canvas/1-html5-canvas-cracking-glass-effect.html
 http://bseth99.github.com/projects/canvas/2-html5-canvas-gradients.html
