@@ -1,4 +1,6 @@
 
+http://bseth99.github.com/projects/google-maps/index.html
+http://bseth99.github.com/projects/google-maps/01-drawing-manager-selections.html
 http://bseth99.github.com/projects/colorbox/demo-part-3.html
 http://bseth99.github.com/projects/colorbox/index.html
 http://bseth99.github.com/projects/colorbox/demo-part-2.html
