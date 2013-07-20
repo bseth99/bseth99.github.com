@@ -38,6 +38,7 @@ http://bseth99.github.com/projects/jquery-ui/3-jquery-ui-spinner-extensions.html
 http://bseth99.github.com/projects/jquery-ui/5-jquery-masks.html
 http://bseth99.github.com/projects/jquery-ui/7-jquery-ui-labeled-slider.html
 http://bseth99.github.com/projects/jquery-ui/index.html
+http://bseth99.github.com/projects/jquery-ui/9-tooltip-comparison.html
 http://bseth99.github.com/projects/jquery-ui/4-jquery-ui-datepicker-range.html
 http://bseth99.github.com/projects/jquery-ui/1-jquery-ui-spinner.html
 http://bseth99.github.com/projects/animate/5-tweenlite-test.html
