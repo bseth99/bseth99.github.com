@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>CSS3 Transforms and Various Alignment Issues with jQuery</title>
+    <title>Detecting and Binding to Click Events Outside an Element</title>
     
     <meta name="author" content="Ben Olson">
 
@@ -375,7 +375,7 @@
       <div class="content">
         
 <div class="page-header">
-  <h3>CSS3 Transforms and Various Alignment Issues with jQuery </h3>
+  <h3>Detecting and Binding to Click Events Outside an Element </h3>
 
 
 <hr style="margin: 0px"/>
@@ -384,8 +384,8 @@
 
 <!-- Place this tag where you want the +1 button to render. -->
 <div style="position: relative; top: -20px; text-align: right; height: 30px">
-  <span><a href="http://www.benknowscode.com">View Blog</a></span>&nbsp;&nbsp;
-  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/rotate/index.html">View Source</a></span>&nbsp;&nbsp;
+  <span><a href="http://www.benknowscode.com/2012/10/18/exploring-the-new-jquery-ui-spinner-beyond-the-basics/">View Blog</a></span>&nbsp;&nbsp;
+  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/events/01-jquery-events-click-out.html">View Source</a></span>&nbsp;&nbsp;
   <div class="g-plusone" data-size="small"></div>
 </div>
 
@@ -402,354 +402,188 @@
 
 <div class="row">
   <div class="span12">
-    <p>The project is a series of tests to determine how to use jQuery to apply the CSS3 tranforms, find points on that rotated element, and align it with another element.<br />The primary objective is to align elements to a circular path.</p>
-
-<p>You can read more about this these tests <a href='http://www.benknowscode.com'>on my blog</a>.</p>
-
-<h4 id='demo_pages'>Demo Pages</h4>
-<ul class='pages'>
-   
-   
-   
+    
 
 
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/rotate/1-rotate-position2.html'>CSS3 Rotational Transforms and DOM Positioning using jQuery.offset()</a></li>
-      	
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/rotate/3-circle-align.html'>Align Rotated DOM Elements to a Circular Path</a></li>
-      	
-      
-    
-  
-    
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/rotate/1-rotate-position.html'>CSS3 Rotational Transforms and DOM Positioning using jQuery.css()</a></li>
-      	
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/rotate/2-alignment.html'>CSS3 Rotation Transform - Coordinate Space and Alignment Issues</a></li>
-      	
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/rotate/5-css-3d-rotate.html'>CSS3 3D Rotation Tests</a></li>
-      	
-      
-    
-  
-    
-      
-      	
-      	<li><a href='/projects/rotate/4-css-transform.html'>CSS3 Transforms using Sylvester Matices and jQuery</a></li>
-      	
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
-    
-      
-    
-  
+<script src="jquery.outside-events.js"></script>
+
+<style>
+
+.boxes {
+   display: inline-block;
+   margin: 10px;
+   height: 50px;
+   width: 100px;
+   background-color: lime;
+   border: 1px solid;
+   text-align: center;
+   vertical-align: middle;
+}
+
+.bar {
+   display: inline-block;
+   margin: 10px;
+   height: 50px;
+   width: 100px;
+   background-color: red;
+   border: 1px solid;
+   text-align: center;
+   vertical-align: middle;
+}
+
+</style>
+
+<div class="discussion">
+   Both of these examples are functionally equivalent.  However, the difference is how the click outside of the element is detected.
+   In the first case, I bind to the document click event and listen for all clicks to bubble up to the document.  I can then check if
+   it occurred in the any elements of interest.  In the second case, I'm using <a href="http://benalman.com/projects/jquery-outside-events-plugin/">Ben Alman's jQuery outside events plugin</a>
+   to bind to the "clickoutside" event directly on the element that I am interested about knowing if a click occurred outside its boundaries.
+   The benefit of using the custom event is that I can bind to the elements I want to detect the event on and I don't have to do the iteration
+   to find elements that are interested in knowing about the event.
+</div>
+<br/><br/>
+
+<h3>Bind to document -> click</h3>
+
+<div id="ex1">
+
+   <div class="boxes ui-corner-all">
+      Click Me
+   </div>
+
+   <div class="bar ui-corner-all">
+      I do nothing
+   </div>
+
+   <div class="boxes ui-corner-all">
+      Click Me
+   </div>
 
 
+   <div class="boxes ui-corner-all">
+      Click Me
+   </div>
 
-</ul>
+
+   <div class="bar ui-corner-all">
+      I do nothing
+   </div>
+
+</div>
+
+<script>
+
+$(function() {
+
+   var $boxes = $('#ex1 .boxes');
+
+   $boxes.on('click', function() {
+
+      var $el = $(this);
+
+      $el
+         .html('Yay! You did it!')
+         .animate({ height: '50px', width: '100px' })
+         .addClass('resetting');
+
+      setTimeout(function() {
+         $el.html('Click me again').removeClass('resetting');
+      }, 2000);
+
+   });
+
+   $(document).on('click', function( e ) {
+
+      $.each( $boxes, function() {
+
+         var $el = $(this);
+
+         if (  this !== e.target &&
+               !$el.has(e.target).length &&
+               !$el.is('.resetting') &&
+               !$(e.target).is('.boxes') ) {
+
+            $el
+               .html('You missed!')
+               .animate({ height: '+=20px', width: '+=20px' });
+         }
+      });
+
+   });
+
+
+});
+</script>
+
+<h3>Bind to .boxes -> clickoutside</h3>
+
+<div id="ex2">
+
+   <div class="bar ui-corner-all">
+      I do nothing
+   </div>
+
+   <div class="boxes ui-corner-all">
+      Click Me
+   </div>
+
+
+   <div class="boxes ui-corner-all">
+      Click Me
+   </div>
+
+
+   <div class="bar ui-corner-all">
+      I do nothing
+   </div>
+
+   <div class="boxes ui-corner-all">
+      Click Me
+   </div>
+
+
+</div>
+
+<script>
+
+$(function() {
+
+   var $boxes = $('#ex2 .boxes');
+
+   $boxes
+      .on({
+         'click': function() {
+
+            var $el = $(this);
+
+            $el
+               .html('Yay! You did it!')
+               .animate({ height: '50px', width: '100px' })
+               .addClass('resetting');
+
+            setTimeout(function() {
+               $el.html('Click me again').removeClass('resetting');
+            }, 2000);
+
+         },
+         'clickoutside': function( e ) {
+
+            var $el = $(this);
+
+            if (  !$el.is('.resetting') &&
+                  !$(e.target).is('.boxes') ) {
+
+               $el
+                  .html('You missed!')
+                  .animate({ height: '+=20px', width: '+=20px' });
+            }
+         }
+   });
+
+
+});
+</script>
+
   </div>
 </div>
 
