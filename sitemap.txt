@@ -3,6 +3,8 @@ http://bseth99.github.com/projects/google-maps/index.html
 http://bseth99.github.com/projects/google-maps/01-drawing-manager-selections.html
 http://bseth99.github.com/projects/events/index.html
 http://bseth99.github.com/projects/events/01-jquery-events-click-out.html
+http://bseth99.github.com/projects/knockout/01-tables-sorting-columns.html
+http://bseth99.github.com/projects/knockout/index.html
 http://bseth99.github.com/projects/colorbox/demo-part-3.html
 http://bseth99.github.com/projects/colorbox/index.html
 http://bseth99.github.com/projects/colorbox/demo-part-2.html
