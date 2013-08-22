@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Creating Sortable Table Data with Knockout</title>
+    <title>Using SVG Filters to Create Outlines of Shapes</title>
     
     <meta name="author" content="Ben Olson">
 
@@ -387,7 +387,7 @@
       <div class="content">
         
 <div class="page-header">
-  <h3>Creating Sortable Table Data with Knockout </h3>
+  <h3>Using SVG Filters to Create Outlines of Shapes </h3>
 
 
 <hr style="margin: 0px"/>
@@ -397,7 +397,7 @@
 <!-- Place this tag where you want the +1 button to render. -->
 <div style="position: relative; top: -20px; text-align: right; height: 30px">
   <span><a href="http://www.benknowscode.com">View Blog</a></span>&nbsp;&nbsp;
-  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/knockout/01-tables-sorting-columns.html">View Source</a></span>&nbsp;&nbsp;
+  <span><a href="https://github.com/bseth99/sandbox/blob/master/projects/svg/6-svg-filter-shape-outline.html">View Source</a></span>&nbsp;&nbsp;
   <div class="g-plusone" data-size="small"></div>
 </div>
 
@@ -441,164 +441,156 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 -->
 
-<link rel="stylesheet" type="text/css" href="../backbone/table.css">
+
+<script src="../canvas/colorpicker/jquery.colorpicker.js"></script>
+<link href="../canvas/colorpicker/jquery.colorpicker.css" rel="stylesheet" type="text/css"/>
+<script src="../canvas/colorpicker/i18n/jquery.ui.colorpicker-en.js"></script>
 
 <style>
 
-.wrapper { width: 800px; margin: auto; }
+.colorbox {
+   border: 1px solid black;
+   display: inline-block;
+   height: 50px;
+   width: 50px;
+   cursor: pointer;
+}
 
-#movies th { white-space: nowrap; cursor: pointer; }
-#movies th span { display: inline-block; margin-left: 5px; }
+#colorpicker {
+   position: absolute;
+   z-index: 1000;
+   padding: 10px;
+   background-color: #fff;
+   border: 1px solid #aaa;
+}
 
-#movies [data-column="rank"] { width: 50px; }
-#movies [data-column="title"] { width: 35%; }
-#movies [data-column="studio"] { width: 80px; }
-#movies [data-column="gross"] { width: 100px; }
-#movies [data-column="year"] { width: 80px; }
 
 </style>
 
-<table id="movies" data-bind="template: { name: 'movies-template', afterRender: rendered }">
+<div class="discussion">
+Demo of a technique to add an outline to any SVG shape using filters.  Use the color picker to change the
+colors of the outline and shape.  The outline is a combination of several filter operations including
+feFlood, feMorphology, feColorMatrix, feComposite, feGaussianBlur, and feBlend.
+</div>
+<br/>
+
+<table>
+ <tr>
+  <td>
+   <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="300" height="300" xlink="http://www.w3.org/1999/xlink" style="position: relative; overflow: hidden; left: 0px; top: 0px;">
+   `
+      <defs>
+
+         <filter id="outline_selected">
+            <feFlood id="outline-color" flood-color="#ff0" result="base" />
+            <feMorphology result="bigger" in="SourceGraphic" operator="dilate" radius="2"/>
+            <feColorMatrix result="mask" in="bigger" type="matrix"
+               values="0 0 0 0 0
+                       0 0 0 0 0
+                       0 0 0 0 0
+                       0 0 0 1 0" />
+            <feComposite result="drop" in="base" in2="mask" operator="in" />
+            <feGaussianBlur result="blur" in="drop" stdDeviation="5" />
+            <feBlend in="SourceGraphic" in2="blur" mode="normal" />
+         </filter>
+
+      </defs>
+
+      <g id="shape1" fill="#00f" filter="url(#outline_selected)" >
+        <path d="M150 0 L75 200 L225 200 Z" transform="translate(10, 30)"/>
+        <ellipse rx="100" ry="40" cx="125" cy="150" />
+      </g>
+   </svg>
+  </td>
+
+  <td style="vertical-align: top">
+
+   <h3>Colors</h3>
+   <div id="colorpicker"></div>
+
+   <table>
+    <tr>
+     <td><strong>Outline</strong></td>
+     <td><strong>Shape</strong></div></td>
+    </tr>
+    <tr>
+     <td width="70px"><div class="colorbox" style="background-color: #ff0" data-target="filter"></div></td>
+     <td width="70px"><div class="colorbox" style="background-color: #00f" data-target="shape"></td>
+    </tr>
+   </table>
+
+   <br/>
+
+   <button id="outline_toggle1">Toggle Outline</button>
+  </td>
+ </tr>
 </table>
 
-<script type="text/html" id="movies-template">
+<script>
+$(function() {
+   $( '#outline_toggle1' )
+      .button()
+      .click(function() {
+         var $shape = $( '#shape1' );
 
-  <thead>
-    <tr>
-      <th data-column="rank"><div>Rank</div></th>
-      <th data-column="title"><div>Title</div></th>
-      <th data-column="studio"><div>Studio</div></th>
-      <th data-column="gross"><div>Gross</div></th>
-      <th data-column="year"><div>Year</div></th>
-     </tr>
-  </thead>
+         if ( $shape.attr( 'filter' ) )
+            $shape.removeAttr( 'filter' );
+         else
+            $shape.attr( 'filter', 'url(#outline_selected)' );
+      });
 
-  <tbody data-bind="foreach: movies">
-    <tr>
-      <td><div data-bind="html: rank"></div></td>
-      <td><div data-bind="html: title"></div></td>
-      <td><div data-bind="html: studio"></div></td>
-      <td><div data-bind="html: gross_fmt"></div></td>
-      <td><div data-bind="html: year"></div></td>
-    </tr>
-  </tbody>
+   $('.colorbox').click(function() {
 
+      var $colorBox = $( this ),
+          $colorSelect = $( '#colorpicker' );
 
+      $colorSelect
+         .show()
+         .data( 'colorTarget', $colorBox )
+         .colorpicker('setColor', $colorBox.css( 'background-color' ) )
+         .position({
+              my: 'left+10, top',
+              at: 'right, top',
+              of: $colorBox
+           });
+
+      $(document).one( 'click', function() {
+
+         $colorSelect
+            .hide()
+            .data( 'colorTarget', null );
+      });
+
+      return false;
+
+   });
+
+   function updateColor( e, ui ) {
+
+      $colorBox = $( this ).data( 'colorTarget' );
+
+      $colorBox.css( 'background-color', ui.formatted );
+
+      if ( $colorBox.attr( 'data-target' ) == 'filter' )
+         $( '#outline-color' ).attr( 'flood-color', ui.formatted );
+      else
+         $( '#shape1' ).attr( 'fill', ui.formatted );
+
+   }
+
+   $( '#colorpicker' )
+        .hide()
+        .colorpicker({
+             colorFormat: 'RGB',
+             select: updateColor
+           })
+        .click( function (e) { e.stopPropagation(); } );
+
+});
 </script>
 
-<script src="globalize.js"></script>
-
-<script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.1.js"></script>
-<script src="knockout.mapping.js"></script>
-
-<script type="text/javascript">
-
-   function MovieModel( movie ) {
-
-       var self = this;
-       var model = ko.mapping.fromJS( movie, {}, self );
-
-       model.gross_fmt = ko.computed(function () {
-           return Globalize.format(self.gross(), 'C0');
-       });
-
-       return model;
-   }
-
-   MovieModel.mapping = {
-      create: function (options) {
-         return new MovieModel(options.data);
-      }
-   }
-
-   function MovieViewModel( movies ) {
-      var self = this;
-
-      this.movies = ko.mapping.fromJS( movies, MovieModel.mapping );
-
-      this.sortColumn = 'rank';
-      this.sortDir = 1;
-
-      this.sortMovies = function( e ) {
-
-         var $el = $(e.currentTarget),
-             ns = $el.attr('data-column'),
-             cs = this.sortColumn;
-
-         if (ns == cs) {
-            this.sortDir *= -1;
-         } else {
-            this.sortDir = 1;
-         }
-
-         this.sortColumn = ns;
-
-         $el.closest('thead').find('span').attr('class', 'ui-icon ui-icon-blank');
-
-         if (this.sortDir == 1) {
-            $el.find('span').removeClass('ui-icon-blank').addClass('ui-icon-triangle-1-n');
-         } else {
-            $el.find('span').removeClass('ui-icon-blank').addClass('ui-icon-triangle-1-s');
-         }
-
-         this.movies.sort( function(a, b) {
-            var a = a[self.sortColumn](),
-                b = b[self.sortColumn]();
-
-            if (a == b) return 0;
-
-            if (self.sortDir == 1) {
-               return a > b ? 1 : -1;
-            } else {
-               return a < b ? 1 : -1;
-            }
-         });
-      },
-
-      this.rendered = function( elements ) {
-         var $el = $(elements);
-
-         $el.filter('thead')
-            .on( 'click', 'th', $.proxy(self, 'sortMovies') )
-            .find( 'th div' )
-             .append( $('<span>') )
-             .closest( 'thead' )
-             .find( 'span' )
-               .addClass( 'ui-icon ui-icon-blank' )
-               .end()
-             .find( '[data-column="title"]' )
-               .click();
-      }
-   }
-
-
-   ko.applyBindings(new MovieViewModel([
-         {"title":"Avatar", "studio":"Fox", "gross":760507625, "year":2009, "rank":1},
-         {"title":"Titanic", "studio":"Par.", "gross":658672302, "year":1997, "rank":2},
-         {"title":"Marvel's The Avengers", "studio":"BV", "gross":623357910, "year":2012, "rank":3},
-         {"title":"The Dark Knight", "studio":"WB", "gross":534858444, "year":2008, "rank":4},
-         {"title":"Star Wars: Episode I - The Phantom Menace", "studio":"Fox", "gross":474544677, "year":1999, "rank":5},
-         {"title":"Star Wars", "studio":"Fox", "gross":460998007, "year":1977, "rank":6},
-         {"title":"The Dark Knight Rises", "studio":"WB", "gross":448139099, "year":2012, "rank":7},
-         {"title":"Shrek 2", "studio":"DW", "gross":441226247, "year":2004, "rank":8},
-         {"title":"E.T.: The Extra-Terrestrial", "studio":"Uni.", "gross":435110554, "year":1982, "rank":9},
-         {"title":"Pirates of the Caribbean: Dead Man's Chest", "studio":"BV", "gross":423315812, "year":2006, "rank":10},
-         {"title":"The Lion King", "studio":"BV", "gross":422783777, "year":1994, "rank":11},
-         {"title":"Toy Story 3", "studio":"BV", "gross":415004880, "year":2010, "rank":12},
-         {"title":"The Hunger Games", "studio":"LGF", "gross":408010692, "year":2012, "rank":13},
-         {"title":"Spider-Man", "studio":"Sony", "gross":403706375, "year":2002, "rank":14},
-         {"title":"Transformers: Revenge of the Fallen", "studio":"P/DW", "gross":402111870, "year":2009, "rank":15},
-         {"title":"Harry Potter and the Deathly Hallows Part 2", "studio":"WB", "gross":381011219, "year":2011, "rank":16},
-         {"title":"Finding Nemo", "studio":"BV", "gross":380812782, "year":2003, "rank":17},
-         {"title":"Star Wars: Episode III - Revenge of the Sith", "studio":"Fox", "gross":380270577, "year":2005, "rank":18},
-         {"title":"The Lord of the Rings: The Return of the King", "studio":"NL", "gross":377845905, "year":2003, "rank":19},
-         {"title":"Spider-Man 2", "studio":"Sony", "gross":373585825, "year":2004, "rank":20}
-      ]));
-
-
-</script>
-
-
+</body>
+</html>
   </div>
 </div>
 

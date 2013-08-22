@@ -15,6 +15,7 @@ http://bseth99.github.com/projects/svg/3-raphael-svg-paths.html
 http://bseth99.github.com/projects/svg/4-raphael-svg-slider.html
 http://bseth99.github.com/projects/svg/1-jquery-svg.html
 http://bseth99.github.com/projects/svg/index.html
+http://bseth99.github.com/projects/svg/6-svg-filter-shape-outline.html
 http://bseth99.github.com/projects/svg/2-svg-progress-bar.html
 http://bseth99.github.com/projects/index.html
 http://bseth99.github.com/projects/rotate/1-rotate-position2.html
