@@ -36,6 +36,7 @@ http://bseth99.github.com/projects/canvas/2-html5-canvas-gradients.html
 http://bseth99.github.com/projects/canvas/6-html5-canvas-bezier-curves.html
 http://bseth99.github.com/projects/canvas/7-html5-canvas-cracking-glass-effect2.html
 http://bseth99.github.com/projects/canvas/3-html5-canvas-layers-blending.html
+http://bseth99.github.com/projects/jquery-ui/A-star-rating-bar.html
 http://bseth99.github.com/projects/jquery-ui/8-draggable-sortable-droppable.html
 http://bseth99.github.com/projects/jquery-ui/6-jquery-ui-touch-punch.html
 http://bseth99.github.com/projects/jquery-ui/2-jquery-ui-spinner-orientation.html
